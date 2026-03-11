@@ -1,4 +1,5 @@
 from unittest import result
+import datetime
 
 
 def convert_currency(amount, from_currency, to_currency):
@@ -27,11 +28,12 @@ def convert_currency(amount, from_currency, to_currency):
     
     return round(result, 2)
  
-  return {
-    "timestamp": st.session_state.get("timestamp", None),
-    "amount_in_eur": amount_in_eur,
-    "result": result,
+    return {
+        "timestamp": datetime.datetime.now().isoformat(),
+        "amount_in_eur": amount_in_eur,
+        "result": result,
     }
+
     
     
     
