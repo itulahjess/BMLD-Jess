@@ -1,4 +1,5 @@
 import streamlit as st
+import datetime
 
 # Wechselkurse zu EUR (Basiswährung)
 EXCHANGE_RATES = {
@@ -32,11 +33,18 @@ with st.form("currency_form"):
     submit_button = st.form_submit_button("Umrechnen") 
 
 if submit_button:
-    if amount > 0:
-        result = convert_currency(amount, from_currency, to_currency)
-        st.success(f"💱 **{amount:.2f} {from_currency} = {result:.2f} {to_currency}**")
-        st.info(f"Wechselkurs: 1 {from_currency} = {result/amount:.4f} {to_currency}")
-    else:
-        st.warning("Bitte einen positiven Betrag eingeben!")
-
+        if amount > 0:
+            result = convert_currency(amount, from_currency, to_currency)
+            timestamp = datetime.datetime.now().isoformat()
+            rate = result / amount if amount != 0 else 0
+            # prepare table data
+            data = {
+                "Eingabe": [f"{amount:.2f} {from_currency}"],
+                "Ergebnis": [f"{result:.2f} {to_currency}"],
+                "Wechselkurs": [f"1 {from_currency} = {rate:.4f} {to_currency}"],
+                "Berechnet am": [timestamp]
+            }
+            st.table(data)
+        else:
+            st.warning("Bitte einen positiven Betrag eingeben!")
    
