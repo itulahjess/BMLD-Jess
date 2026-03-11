@@ -1,3 +1,6 @@
+from unittest import result
+
+
 def convert_currency(amount, from_currency, to_currency):
     """
     Konvertiert einen Betrag von einer Währung in eine andere.
@@ -23,3 +26,12 @@ def convert_currency(amount, from_currency, to_currency):
     result = amount_in_eur * exchange_rates[to_currency]
     
     return round(result, 2)
+ 
+  return {
+    "timestamp": st.session_state.get("timestamp", None),
+    "amount_in_eur": amount_in_eur,
+    "result": result,
+    }
+    
+    
+    

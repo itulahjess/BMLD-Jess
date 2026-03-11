@@ -39,11 +39,4 @@ if submit_button:
     else:
         st.warning("Bitte einen positiven Betrag eingeben!")
 
-return {
-    "timestamp": st.session_state.get("timestamp", None),
-    "amount": amount,
-    "from_currency": from_currency, 
-    "to_currency": to_currency,
-    "result": result if submit_button else None
-}
-    
+   
