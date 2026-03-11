@@ -39,5 +39,10 @@ if submit_button:
     else:
         st.warning("Bitte einen positiven Betrag eingeben!")
 
-
+return {
+    "timestamp": st.session_state.get("timestamp", None),
+    "title": "Währungsrechner",
+    "description": "Ein einfacher Währungsrechner, der verschiedene Währungen umrechnet.",
+    "exchange_rates": EXCHANGE_RATES
+}
     
