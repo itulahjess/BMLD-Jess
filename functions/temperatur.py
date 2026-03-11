@@ -25,8 +25,6 @@ def convert_currency(amount, from_currency, to_currency):
     # Umrechnung
     amount_in_eur = amount / exchange_rates[from_currency]
     result = amount_in_eur * exchange_rates[to_currency]
-    
-    return round(result, 2)
  
     return {
         "timestamp": datetime.datetime.now().isoformat(),
