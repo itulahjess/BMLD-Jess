@@ -26,6 +26,10 @@ st.write("Hier kannst du verschiedene Währungen umrechnen. Gib den Betrag und d
 
 currencies = list(EXCHANGE_RATES.keys())
 
+# initialize history in session state
+if 'history' not in st.session_state:
+    st.session_state.history = []
+
 with st.form("currency_form"):
     amount = st.number_input("Betrag", min_value=0.0, step=0.01, value=1.0)
     from_currency = st.selectbox("Von Währung", currencies, index=0)
@@ -37,14 +41,17 @@ if submit_button:
             result = convert_currency(amount, from_currency, to_currency)
             timestamp = datetime.datetime.now().isoformat()
             rate = result / amount if amount != 0 else 0
-            # prepare table data
-            data = {
-                "Eingabe": [f"{amount:.2f} {from_currency}"],
-                "Ergebnis": [f"{result:.2f} {to_currency}"],
-                "Wechselkurs": [f"1 {from_currency} = {rate:.4f} {to_currency}"],
-                "Berechnet am": [timestamp]
+            # prepare row and append to history
+            row = {
+                "Eingabe": f"{amount:.2f} {from_currency}",
+                "Ergebnis": f"{result:.2f} {to_currency}",
+                "Wechselkurs": f"1 {from_currency} = {rate:.4f} {to_currency}",
+                "Berechnet am": timestamp
             }
-            st.table(data)
+            st.session_state.history.append(row)
+
+            # display full history as table
+            st.table(st.session_state.history)
         else:
             st.warning("Bitte einen positiven Betrag eingeben!")
    
