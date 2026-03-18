@@ -1,3 +1,4 @@
+import pandas as pd
 import streamlit as st
 # --- NEW CODE: import and initialize data manager and login manager ---
 from utils.data_manager import DataManager
