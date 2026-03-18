@@ -28,6 +28,7 @@ def convert_currency(amount, from_currency, to_currency):
  
     return {
         "timestamp": datetime.datetime.now().isoformat(),
+        "eingabe": amount,
         "amount_in_eur": amount_in_eur,
         "result": result,
     }

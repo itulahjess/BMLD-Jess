@@ -1,6 +1,6 @@
 import streamlit as st
 import datetime
-
+from utils.data_manager import DataManager
 # Wechselkurse zu EUR (Basiswährung)
 EXCHANGE_RATES = {
     "EUR": 1.0,
@@ -39,14 +39,14 @@ with st.form("currency_form"):
 if submit_button:
         if amount > 0:
             result = convert_currency(amount, from_currency, to_currency)
-            timestamp = datetime.datetime.now().isoformat()
+            
             rate = result / amount if amount != 0 else 0
             # prepare row and append to history
             row = {
                 "Eingabe": f"{amount:.2f} {from_currency}",
                 "Ergebnis": f"{result:.2f} {to_currency}",
                 "Wechselkurs": f"1 {from_currency} = {rate:.4f} {to_currency}",
-                "Berechnet am": timestamp
+                "Berechnet am": result["timestamp"]
             }
             st.session_state.history.append(row)
 
@@ -54,4 +54,8 @@ if submit_button:
             st.table(st.session_state.history)
         else:
             st.warning("Bitte einen positiven Betrag eingeben!")
-   
+        # --- CODE UPDATE: save data to data manager ---
+        data_manager = DataManager()
+        data_manager.save_user_data(st.session_state['data_df'], 'data.csv')
+
+         # --- END OF CODE UPDATE ---
