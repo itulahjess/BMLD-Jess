@@ -32,3 +32,10 @@ if submit_button:
         
 # display the data frame in a table
 st.dataframe(st.session_state['data_df'])
+
+# Add a simple chart of the conversion results
+if not st.session_state['data_df'].empty:
+    st.subheader("Verlauf der Umrechnungen")
+    chart_df = st.session_state['data_df'].copy()
+    chart_df['timestamp'] = pd.to_datetime(chart_df['timestamp'])
+    st.line_chart(chart_df.set_index('timestamp')['result'])
