@@ -1,6 +1,14 @@
 from unittest import result
 import datetime
 
+# Wechselkurse zu EUR (Basiswährung)
+EXCHANGE_RATES = {
+    "EUR": 1.0,
+    "USD": 1.08,
+    "GBP": 0.86,
+    "JPY": 160.5,
+    "CHF": 0.95
+}
 
 def convert_currency(amount, from_currency, to_currency):
     """
@@ -14,17 +22,10 @@ def convert_currency(amount, from_currency, to_currency):
     Returns:
         Umgerechneter Betrag
     """
-    # Wechselkurse (Basis: EUR = 1)
-    exchange_rates = {
-        "EUR": 1.0,
-        "USD": 1.10,
-        "GBP": 0.86,
-        "JPY": 130.50
-    }
     
     # Umrechnung
-    amount_in_eur = amount / exchange_rates[from_currency]
-    result = amount_in_eur * exchange_rates[to_currency]
+    amount_in_eur = amount / EXCHANGE_RATES[from_currency]
+    result = amount_in_eur * EXCHANGE_RATES[to_currency]
  
     return {
         "timestamp": datetime.datetime.now().isoformat(),
