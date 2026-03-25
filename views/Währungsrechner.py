@@ -39,15 +39,3 @@ if not st.session_state['data_df'].empty:
     chart_df = st.session_state['data_df'].copy()
     chart_df['timestamp'] = pd.to_datetime(chart_df['timestamp'])
     st.line_chart(chart_df.set_index('timestamp')['result'])
-
-# Add a bar chart showing the amount in all currencies
-if submit_button and amount > 0:
-    st.subheader("Betrag in allen Währungen")
-    amount_in_eur = amount / EXCHANGE_RATES[from_currency]
-    currencies = list(EXCHANGE_RATES.keys())
-    values = [amount_in_eur * EXCHANGE_RATES[currency] for currency in currencies]
-    bar_df = pd.DataFrame({
-        'Währung': currencies,
-        'Betrag': values
-    })
-    st.bar_chart(bar_df.set_index('Währung'))
