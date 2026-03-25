@@ -6,7 +6,7 @@ from utils.login_manager import LoginManager
 
 data_manager = DataManager(       # initialize data manager
     fs_protocol='webdav',         # protocol for the filesystem, use webdav for switch drive
-    fs_root_folder="BMLD_App_DB"  # folder on switch drive where the data is stored
+    fs_root_folder="bmldjm"  # folder on switch drive where the data is stored
     ) 
 login_manager = LoginManager(data_manager) # handles user login and registration
 login_manager.login_register()             # stops if not logged in
