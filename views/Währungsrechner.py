@@ -1,8 +1,8 @@
-import streamlit as st
+import streamlit as st  # type: ignore
 import datetime
 from utils.data_manager import DataManager
 from functions.temperatur import convert_currency, EXCHANGE_RATES
-import pandas as pd
+import pandas as pd  # type: ignore
 
 st.title("Währungsrechner")
 
@@ -35,5 +35,5 @@ st.dataframe(st.session_state['data_df'])
 if not st.session_state['data_df'].empty:
     st.subheader("Verlauf der Umrechnungen")
     chart_df = st.session_state['data_df'].copy()
-    chart_df['timestamp'] = pd.to_datetime(chart_df['timestamp'])
+    chart_df['timestamp'] = pd.to_datetime(chart_df['timestamp'], format='ISO8601')  # --- CODE UPDATE: specify format for timestamp ---
     st.line_chart(chart_df.set_index('timestamp')['result'])
