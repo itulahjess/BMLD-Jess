@@ -45,7 +45,9 @@ class LoginManager:
         self.data_manager = data_manager
         self.auth_credentials_file = auth_credentials_file
         self.auth_cookie_name = auth_cookie_name
-        self.auth_cookie_key = secrets.token_urlsafe(32)
+        if 'auth_cookie_key' not in st.session_state:
+            st.session_state.auth_cookie_key = secrets.token_urlsafe(32)
+        self.auth_cookie_key = st.session_state.auth_cookie_key
         self.auth_credentials = self._load_auth_credentials()
         self.authenticator = stauth.Authenticate(
             self.auth_credentials, self.auth_cookie_name, self.auth_cookie_key
