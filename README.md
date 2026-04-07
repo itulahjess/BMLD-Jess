@@ -1,9 +1,11 @@
 # BMLD-Inf2-AppV0
+## Team:
+Michelle Assadi Rad (assadmic@students.zhaw.ch)
 
-Das leere Gerüst um eine App aufzubauen.
+Medhani Kathirkamanathan (kathimed@students.zhaw.ch)
 
-## Autor
+Jessica Itulah (itulajes@students.zhaw.ch)
 
-Samuel Wehrli (wehs@zhaw.ch)
-
-
+## App-Beschrieb
+App-Name: Kaitas
+Kaitas wurde entwickelt, um eine übersichtliche Verwaltung alles Abbonmente zu ermöglichen.
