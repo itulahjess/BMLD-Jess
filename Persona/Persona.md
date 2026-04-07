@@ -27,10 +27,6 @@ Leon löst einfach Abos aus, um seine Bedürfnisse zu stillen. Benutzt es jedoch
 Leon mag einfache Wege, um etwas anzuwenden. Er hat eine Abneigung, zu komplizierte und lange Registrierungen. Dashboards, die übersichtlich dargestellt sind, bevorzugt er am liebsten, denn diese führen nicht zur Verwirrung. 
 
 *** Das ärgert mich immer wieder: ***
-Das ärgert mich immer wieder:
-Das E-Banking ist nicht ganz übersichtlich bezüglich der Ausgaben der Abos, weil alle Transaktionen zu sehen sind. Für Leon ist das ärgerlich, da er nicht herausfiltern kann, wie viel er insgesamt für seine Abos bezahlt.
-
-*** Das ärgert mich immer wieder: ***
 Das E-Banking ist nicht ganz übersichtlich bezüglich der Ausgaben der Abos, weil alle Transaktionen zu sehen sind. Für Leon ist das ärgerlich, da er nicht herausfiltern kann, wie viel er insgesamt für seine Abos bezahlt.
 
 *** Lifestyle/Mode/Produkte: ***
