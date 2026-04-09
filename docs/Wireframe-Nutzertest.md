@@ -52,7 +52,7 @@ Nutzer 2: Die Übersichtstabelle aller Abonnements finde ich gut und übersichtl
 Nutzer 3: Sauber und ausführlich. Wenn man Passwort vergessen hat, kann man immer noch ein Neues machen.
 
 ### Was war schlecht?
-Nutzer 1: -
+Nutzer 1: Buttons wie "Weiter", "Bestätigen", usw. fehlen.
 Nutzer 2: -
 Nutzer 3: Design besser gestalten
 
