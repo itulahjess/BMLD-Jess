@@ -61,6 +61,9 @@ Nutzer 1: Man könnte noch eine E-Mail-Bestätigung nach der Registrierung mache
 Nutzer 2: Bei der Registrierung könnte man beim Feld "Cache" ein Info-icon(i) hinzufügen, das beim Anklicken kurz erklärt, was zu tun ist, um Verwirrung zu vermeiden.
 Nutzer 3: Kaitas Viereck, wie eine App
 
+- Dass es alle Abonnements noch zusammenrechnet und am Schluss ein Totalbetrag anzeigt.
+- Mehr Elemente hinzufügen.
+
 ### Neue Probleme?
 Nutzer 1: -
 Nutzer 2: -
