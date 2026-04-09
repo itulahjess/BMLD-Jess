@@ -13,7 +13,7 @@ Wir möchten testen, ob die Nutzer durch die App eine einfache gute Übersicht �
 Ob der Nutzer sich bewusst ist, welche Abos er wirklich braucht und welche unnötig sind und dabei unnötig Geld ausgibt.
 
 
-## Protokoll
+## Protokoll:
 ### Startseite:
 Nutzer 1: gut, klar
 Nutzer 2: gut
