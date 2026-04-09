@@ -1,17 +1,6 @@
 ## Hypothese:
-### Was wissen wir?
-Wir wissen, dass Menschen ähnliche Apps nutzen.
-
-### Was wissen wir nicht?
-Wir wissen nicht, ob diese ähnlichen Apps gut sind, dass es alle zufrieden benutzen können.
-
-### Was möchten wir testen?
-Wir möchten testen, ob die Nutzer durch die App eine einfache gute Übersicht über ihre Abos haben und es eine verständliche Bedienung ist.
-
-### Wie bewerten wir den Test?
-### Was ist ein Erfolg?
-Ob der Nutzer sich bewusst ist, welche Abos er wirklich braucht und welche unnötig sind und dabei unnötig Geld ausgibt.
-
+Wir wissen, dass Menschen ähnliche Apps benutzen. Jedoch wissen wir nicht, ob diese ähnlichen Apps gut genug sind, übersichtlich und einfach zu bedienen sind, dass es alle zufrieden benutzen können.
+Wir möchten testen, ob die Nutzer durch die App eine einfache gute Übersicht über ihre Abos haben können und diese dementsprechend unkompliziert verwalten können.
 
 ## Protokoll:
 ### Startseite:
