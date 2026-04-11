@@ -36,24 +36,22 @@ Nutzer 3: am Besten auf Deutsch übersetzen, sonst gut
 
 ## Stichworte zu den vier Punkten des Test-Rasters:
 ### Was war gut?
-Nutzer 1: Nur die wichtigsten Angaben mussten angegeben werden. Basic, man wusste, wie es abläuft.
-Nutzer 2: Die Übersichtstabelle aller Abonnements finde ich gut und übersichtlich gestaltet.
-Nutzer 3: Sauber und ausführlich. Wenn man Passwort vergessen hat, kann man immer noch ein Neues machen.
+- Nur die wichtigsten Angaben mussten angegeben werden.
+- Basic, man wusste, wie es abläuft.
+- Die Übersichtstabelle aller Abonnements finde ich gut und übersichtlich gestaltet.
+- Sauber und ausführlich. Wenn man Passwort vergessen hat, kann man immer noch ein Neues machen.
 
 ### Was war schlecht?
-Nutzer 1: Buttons wie "Weiter", "Bestätigen", usw. fehlen.
-Nutzer 2: -
-Nutzer 3: Design besser gestalten
+- Buttons wie "Weiter", "Bestätigen", usw. fehlen.
+- Design besser gestalten
+- "Captcha" und nicht "Cache"
 
 ### Neue Ideen?
-Nutzer 1: Man könnte noch eine E-Mail-Bestätigung nach der Registrierung machen.
-Nutzer 2: Bei der Registrierung könnte man beim Feld "Cache" ein Info-icon(i) hinzufügen, das beim Anklicken kurz erklärt, was zu tun ist, um Verwirrung zu vermeiden.
-Nutzer 3: Kaitas Viereck, wie eine App
-
+- Man könnte noch eine E-Mail-Bestätigung nach der Registrierung machen.
+- Bei der Registrierung könnte man beim Feld "Cache" ein Info-icon(i) hinzufügen, das beim Anklicken kurz erklärt, was zu tun ist, um Verwirrung zu vermeiden.
+-  Kaitas Viereck, wie eine App
 - Dass es alle Abonnements noch zusammenrechnet und am Schluss ein Totalbetrag anzeigt.
 - Mehr Elemente hinzufügen.
 
 ### Neue Probleme?
-Nutzer 1: -
-Nutzer 2: -
-Nutzer 3: Nicht genügend Bestätigungsknöpfe. Übersetzen auf Deutsch
+- Nicht genügend Bestätigungsknöpfe. Übersetzen auf Deutsch
