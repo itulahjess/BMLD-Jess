@@ -6,7 +6,7 @@ Wir möchten testen, ob die Nutzer durch die App eine einfache gute Übersicht �
 ### Startseite:
 Nutzer 1: gut, klar
 Nutzer 2: gut
-Nutzer 3: gut, man sieht, was die App beinhalten
+Nutzer 3: gut, man sieht, was die App beinhaltet
 
 ### Registrierung:
 Nutzer 1: übersichtlich
