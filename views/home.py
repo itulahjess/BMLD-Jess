@@ -10,7 +10,7 @@ Diese App wurde von folgenden Personen entwickelt:
 - Medhani Kathirkamanathan (kathimed@students.zhaw.ch)
 - Michelle Assadi Rad (assadmic@students.zhaw.ch)
 
-Diese App dient zur Umrechnung von Währungen. Sie wurde im Rahmen des Moduls "Informatik 2" an der ZHAW entwickelt.
+Kaitas wurde entwickelt, um eine übersichtliche Verwaltung aller Abbonmente zu ermöglichen.
 
 Autor: Samuel Wehrli (wehs@zhaw.ch)
 """
