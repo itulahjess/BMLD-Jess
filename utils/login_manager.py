@@ -104,7 +104,7 @@ class LoginManager:
             """
         <div class="login-header">
           <h1 class="login-title">Willkommen zurück</h1>
-          <div class="login-sub">Melde dich an, um Zugriff auf den Währungsrechner zu erhalten</div>
+          <div class="login-sub">Melde dich an, um Zugriff auf die Aboverwaltung zu erhalten</div>
         </div>
         """,
             unsafe_allow_html=True,
