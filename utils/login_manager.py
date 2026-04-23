@@ -119,14 +119,15 @@ class LoginManager:
                 self._register()
 
     def _inject_mint_styles(self):
-        """Inject CSS to style the login/register page with mint-green accents."""
+        """Inject CSS to style the login/register page with mint-green accents but without the boxed header."""
         css = """
         <style>
-        :root{--mint:#c8f1e0;--mint-strong:#56c49d;--card:#ffffff;}
+        :root{--mint:#c8f1e0;--mint-strong:#56c49d;--card:#ffffff}
         /* center the main column */
         .stApp .block-container{max-width:760px;margin:28px auto;padding-left:16px;padding-right:16px}
-        .login-header{max-width:760px;margin:6px auto 18px;padding:18px;border-radius:12px;background:linear-gradient(90deg,var(--mint),#ffffff);box-shadow:0 8px 20px rgba(5,63,45,0.06);text-align:center}
-        .login-title{font-size:28px;font-weight:700;color:#054033;margin:0}
+        /* Option A: remove the box around the header */
+        .login-header{max-width:760px;margin:6px auto 18px;padding:0;border-radius:0;background:transparent;box-shadow:none;text-align:center}
+    .login-title{font-size:16spx;font-weight:700;color:#054033;margin:0}
         .login-sub{color:#0f5132;margin-top:6px}
         /* inputs and buttons */
         input[type='text'], input[type='password'], input[type='number'], textarea{border-radius:8px;border:1px solid #e6f2ec;padding:10px;background:#f7fffb}
@@ -137,7 +138,6 @@ class LoginManager:
         </style>
         """
         st.markdown(css, unsafe_allow_html=True)
-
     def _login(self):
         """Renders the login form and handles authentication status messages."""
         self.authenticator.login()
