@@ -114,7 +114,12 @@ class DataManager:
             The loaded data (DataFrame, dict, list, etc.).
         """
         dh = self._get_data_handler()
-        return dh.load(file_name, initial_value, **load_args)
+        try:
+            return dh.load(file_name, initial_value, **load_args)
+        except Exception as e:
+            # avoid surfacing low-level read errors (timeouts) to the app — warn and return initial
+            st.warning(f"Konnte '{file_name}' nicht laden: {e}. Verwende Standardwerte.")
+            return initial_value
 
     def load_user_data(self, file_name, initial_value=None, **load_args):
         """
@@ -133,7 +138,11 @@ class DataManager:
             st.error(f"DataManager: No user logged in, cannot load '{file_name}'")
             return initial_value
         dh = self._get_data_handler('user_data_' + username)
-        return dh.load(file_name, initial_value, **load_args)
+        try:
+            return dh.load(file_name, initial_value, **load_args)
+        except Exception as e:
+            st.warning(f"Konnte Benutzerdaten '{file_name}' nicht laden: {e}. Verwende Standardwerte.")
+            return initial_value
 
     def save_app_data(self, data, file_name):
         """
