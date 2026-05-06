@@ -13,26 +13,42 @@ if st.session_state.get('username') is None:
 	st.stop()
 
 
-# rerun compatibility: some streamlit versions may not expose experimental_rerun
+# rerun compatibility: use st.rerun() for newer versions
 try:
-	_rerun = st.experimental_rerun  # type: ignore[attr-defined]
-except Exception:
+	_rerun = st.rerun
+except AttributeError:
+	# fallback for older versions
 	try:
-		# newer runtime location
-		from streamlit.runtime.scriptrunner import RerunException
-
-		def _rerun():
-			raise RerunException()
-	except Exception:
-		# last fallback: stop the script (best-effort)
+		_rerun = st.experimental_rerun
+	except AttributeError:
 		def _rerun():
 			st.stop()
+
+
+# Icon options
+ICON_OPTIONS = {
+	'📷': 'Camera',
+	'📱': 'Smartphone',
+	'🎵': 'Music',
+	'📺': 'TV',
+	'🎮': 'Gaming',
+	'📚': 'Books',
+	'💼': 'Business',
+	'🏠': 'Home',
+	'🍎': 'Apple',
+	'🎥': 'Video',
+	'🌐': 'Web',
+	'📧': 'Email',
+	'📰': 'News',
+	'🎬': 'Entertainment',
+	'💳': 'Finance'
+}
 
 
 def _load():
 	df = dm.load_user_data('subscriptions.csv', initial_value=pd.DataFrame())
 	if df is None or df.empty:
-		return pd.DataFrame(columns=['name','start_date','amount','interval','active','link'])
+		return pd.DataFrame(columns=['name','start_date','amount','interval','active','link','icon'])
 	# coerce types
 	# if older data includes a 'provider' column, drop it to remove the field
 	if 'provider' in df.columns:
@@ -50,6 +66,11 @@ def _load():
 		df['start_date'] = pd.to_datetime(df['start_date'], errors='coerce').dt.date
 	df['amount'] = pd.to_numeric(df['amount'], errors='coerce').fillna(0.0)
 	df['active'] = df.get('active', True)
+	# ensure link is string
+	df['link'] = df['link'].astype(str).fillna('')
+	# add icon column if not present
+	if 'icon' not in df.columns:
+		df['icon'] = '📱'
 	return df
 
 
@@ -79,74 +100,27 @@ def _safe_delete(index):
 		_rerun()
 
 
-with st.expander('Neues Abo hinzufügen'):
-	with st.form('add_sub'):
-		c1, c2 = st.columns(2)
-		name = c1.text_input('Name')
-		start_date = st.date_input('Startdatum', value=date.today())
-		amount = st.number_input('Betrag', min_value=0.0, value=0.0, step=0.5)
-		interval = st.selectbox('Intervall', ['Monthly','Yearly','Quarterly'])
-		active = st.checkbox('Aktiv', value=True)
-		link = c2.text_input('Link (URL)')
-		if st.form_submit_button('Hinzufügen'):
-			# ensure start_date is stored as a date (no time component)
-			sd = pd.to_datetime(start_date, errors='coerce')
-			sd = sd.date() if not pd.isna(sd) else None
-			rec = {'name':name,'start_date':sd,'amount':float(amount),'interval':interval,'active':active,'link': link}
-			subs = pd.concat([subs, pd.DataFrame([rec])], ignore_index=True)
-			_save(subs)
-			st.success('Abonnement hinzugefügt')
-
-
-tab_all, tab_monthly, tab_yearly = st.tabs(['Alle','Monatlich','Jährlich'])
-
-
-def _render_table(df, scope=""):
+def _render_subscription_cards(df, editable=True):
 	if df.empty:
 		st.info('Keine Abonnemente gefunden')
 		return
-	df_display = df.copy()
-	df_display['start_date'] = df_display['start_date'].astype(str)
-	st.dataframe(df_display)
-	# actions
-	for local_i, (idx, row) in enumerate(df.iterrows()):
-		cols = st.columns([3,1])
-		with cols[0]:
-			st.write(f"**{row['name']}** ({row['interval']})")
-			link = row.get('link','')
-			if pd.notna(link) and str(link).strip():
-				st.markdown(f"[Link]({link})")
-		with cols[1]:
-			btn_del_key = f"del-{scope}-{idx}"
-			btn_edit_key = f"edit-{scope}-{idx}"
-			if st.button('Bearbeiten', key=btn_edit_key):
-				st.session_state['edit_idx'] = int(idx)
-			if st.button('Löschen', key=btn_del_key):
-				_safe_delete(idx)
+	for idx, row in df.iterrows():
+		with st.container():
+			col1, col2, col3 = st.columns([1, 4, 1])
+			col1.write(row['icon'])
+			col2.write(f"**{row['name']}** - {row['amount']:.2f}€ ({row['interval']})")
+			col2.write(f"Start: {row['start_date']} | Aktiv: {'Ja' if row['active'] else 'Nein'}")
+			if editable and col3.button('Bearbeiten', key=f'edit-{idx}'):
+				st.session_state['edit_idx'] = idx
+				_rerun()
 
 
-with tab_all:
-	st.header('Alle Abonnemente')
-	_render_table(subs, scope='all')
-
-with tab_monthly:
-	st.header('Monatliche Abonnemente')
-	dfm = subs[subs['interval']=='Monthly'] if not subs.empty else subs
-	_render_table(dfm, scope='monthly')
-
-with tab_yearly:
-	st.header('Jährliche Abonnemente')
-	dfy = subs[subs['interval']=='Yearly'] if not subs.empty else subs
-	_render_table(dfy, scope='yearly')
-
-# Edit form (appears when edit_idx is set)
+# Edit form as separate "page"
 if 'edit_idx' in st.session_state:
-	edit_i = st.session_state.pop('edit_idx')
-	if edit_i not in subs.index:
-		st.error('Ungültiger Eintrag zum Bearbeiten')
-	else:
-		row = subs.loc[edit_i]
-		st.subheader('Abonnement bearbeiten')
+	edit_idx = st.session_state['edit_idx']
+	if edit_idx in subs.index:
+		row = subs.loc[edit_idx]
+		st.header(f"Abonnement bearbeiten: {row['icon']} {row['name']}")
 		with st.form('edit_sub'):
 			c1, c2 = st.columns(2)
 			ename = c1.text_input('Name', value=row['name'])
@@ -155,16 +129,70 @@ if 'edit_idx' in st.session_state:
 			einterval = st.selectbox('Intervall', ['Monthly','Yearly','Quarterly'], index=['Monthly','Yearly','Quarterly'].index(row['interval']) if row['interval'] in ['Monthly','Yearly','Quarterly'] else 0)
 			eactive = st.checkbox('Aktiv', value=bool(row['active']))
 			elink = c2.text_input('Link (URL)', value=row.get('link',''))
-			if st.form_submit_button('Speichern'):
+			eicon = st.selectbox('Icon', options=list(ICON_OPTIONS.keys()), format_func=lambda x: f"{x} {ICON_OPTIONS[x]}", index=list(ICON_OPTIONS.keys()).index(row.get('icon', '📱')) if row.get('icon') in ICON_OPTIONS else 0)
+			col1, col2, col3 = st.columns(3)
+			if col1.form_submit_button('Speichern'):
 				sd = pd.to_datetime(estart, errors='coerce')
 				sd = sd.date() if not pd.isna(sd) else None
-				subs.at[edit_i, 'name'] = ename
-				subs.at[edit_i, 'start_date'] = sd
-				subs.at[edit_i, 'amount'] = float(eamount)
-				subs.at[edit_i, 'interval'] = einterval
-				subs.at[edit_i, 'active'] = bool(eactive)
-				subs.at[edit_i, 'link'] = elink
+				subs.at[edit_idx, 'name'] = ename
+				subs.at[edit_idx, 'start_date'] = sd
+				subs.at[edit_idx, 'amount'] = float(eamount)
+				subs.at[edit_idx, 'interval'] = einterval
+				subs.at[edit_idx, 'active'] = bool(eactive)
+				subs.at[edit_idx, 'link'] = elink
+				subs.at[edit_idx, 'icon'] = eicon
 				_save(subs)
+				del st.session_state['edit_idx']
 				st.success('Änderungen gespeichert')
 				_rerun()
+			if col2.form_submit_button('Löschen'):
+				_safe_delete(edit_idx)
+				del st.session_state['edit_idx']
+				_rerun()
+			if col3.form_submit_button('Abbrechen'):
+				del st.session_state['edit_idx']
+				_rerun()
+	else:
+		st.error('Ungültiges Abo zum Bearbeiten')
+		del st.session_state['edit_idx']
+else:
+	# Show tabs only when not editing
+	tab_all, tab_monthly, tab_yearly = st.tabs(['Alle','Monatlich','Jährlich'])
+
+	with tab_all:
+		st.header('Alle Abonnemente')
+		_render_subscription_cards(subs, editable=True)
+
+	with tab_monthly:
+		st.header('Monatliche Abonnemente')
+		dfm = subs[subs['interval']=='Monthly'] if not subs.empty else subs
+		_render_subscription_cards(dfm, editable=False)
+
+	with tab_yearly:
+		st.header('Jährliche Abonnemente')
+		dfy = subs[subs['interval']=='Yearly'] if not subs.empty else subs
+		_render_subscription_cards(dfy, editable=False)
+
+	st.divider()
+
+	with st.expander('➕ Neues Abo erfassen'):
+		with st.form('add_sub'):
+			c1, c2 = st.columns(2)
+			name = c1.text_input('Name')
+			start_date = st.date_input('Startdatum', value=date.today())
+			amount = st.number_input('Betrag', min_value=0.0, value=0.0, step=0.5)
+			interval = st.selectbox('Intervall', ['Monthly','Yearly','Quarterly'])
+			active = st.checkbox('Aktiv', value=True)
+			link = c2.text_input('Link (URL)')
+			icon = st.selectbox('Icon', options=list(ICON_OPTIONS.keys()), format_func=lambda x: f"{x} {ICON_OPTIONS[x]}")
+			if st.form_submit_button('Hinzufügen'):
+				# ensure start_date is stored as a date (no time component)
+				sd = pd.to_datetime(start_date, errors='coerce')
+				sd = sd.date() if not pd.isna(sd) else None
+				rec = {'name':name,'start_date':sd,'amount':float(amount),'interval':interval,'active':active,'link': link, 'icon': icon}
+				subs = pd.concat([subs, pd.DataFrame([rec])], ignore_index=True)
+				_save(subs)
+				st.success('Abonnement hinzugefügt')
+
+
 
