@@ -1,7 +1,6 @@
 import streamlit as st
 
 
-st.title("Kaitas — Aboverwaltung")
 
 import streamlit as st
 

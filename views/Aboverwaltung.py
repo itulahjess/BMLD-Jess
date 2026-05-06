@@ -4,7 +4,6 @@ from datetime import date
 from utils.data_manager import DataManager
 
 
-st.title("Aboverwaltung")
 
 
 dm = DataManager()
