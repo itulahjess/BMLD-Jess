@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from datetime import date
+from datetime import date, timedelta
 from utils.data_manager import DataManager
 
 
@@ -26,21 +26,21 @@ except AttributeError:
 
 # Icon options
 ICON_OPTIONS = {
-	'📷': 'Camera',
+	'📷': 'Kamera',
 	'📱': 'Smartphone',
-	'🎵': 'Music',
+	'🎵': 'Musik',
 	'📺': 'TV',
-	'🎮': 'Gaming',
-	'📚': 'Books',
-	'💼': 'Business',
-	'🏠': 'Home',
+	'🎮': 'Spiele',
+	'📚': 'Bücher',
+	'💼': 'Geschäft',
+	'🏠': 'Zuhause',
 	'🍎': 'Apple',
 	'🎥': 'Video',
 	'🌐': 'Web',
-	'📧': 'Email',
-	'📰': 'News',
-	'🎬': 'Entertainment',
-	'💳': 'Finance'
+	'📧': 'E-Mail',
+	'📰': 'Nachrichten',
+	'🎬': 'Unterhaltung',
+	'💳': 'Finanzen'
 }
 
 
@@ -77,6 +77,30 @@ def _save(df):
 	dm.save_user_data(df, 'subscriptions.csv')
 
 
+def _calculate_metrics(df):
+	"""Berechnet Metriken für die Übersicht"""
+	active_subs = df[df['active'] == True] if not df.empty else df
+	
+	monthly_cost = 0
+	yearly_cost = 0
+	
+	for _, row in active_subs.iterrows():
+		if row['interval'] == 'Monthly':
+			monthly_cost += float(row['amount'])
+			yearly_cost += float(row['amount']) * 12
+		elif row['interval'] == 'Yearly':
+			yearly_cost += float(row['amount'])
+		elif row['interval'] == 'Quarterly':
+			monthly_cost += float(row['amount']) / 3
+			yearly_cost += float(row['amount']) * 4
+	
+	return {
+		'monthly': monthly_cost,
+		'yearly': yearly_cost,
+		'active_count': len(active_subs)
+	}
+
+
 subs = _load()
 
 
@@ -101,15 +125,35 @@ def _safe_delete(index):
 
 def _render_subscription_cards(df, editable=True):
 	if df.empty:
-		st.info('Keine Abonnemente gefunden')
+		st.info('Keine Abonnements gefunden')
 		return
 	for idx, row in df.iterrows():
+		# Berechne nächste Verlängerung
+		next_renewal = row['start_date']
+		if row['interval'] == 'Monthly':
+			while next_renewal <= date.today():
+				next_renewal = next_renewal.replace(day=1) + timedelta(days=32)
+				next_renewal = next_renewal.replace(day=1) - timedelta(days=1)
+				next_renewal = next_renewal.replace(day=row['start_date'].day)
+		elif row['interval'] == 'Yearly':
+			while next_renewal <= date.today():
+				next_renewal = next_renewal.replace(year=next_renewal.year + 1)
+		
 		with st.container():
-			col1, col2, col3 = st.columns([1, 4, 1])
+			col1, col2, col3, col4, col5 = st.columns([0.8, 2, 1.5, 1, 0.5])
 			col1.write(row['icon'])
-			col2.write(f"**{row['name']}** - {row['amount']:.2f}€ ({row['interval']})")
-			col2.write(f"Start: {row['start_date']} | Aktiv: {'Ja' if row['active'] else 'Nein'}")
-			if editable and col3.button('Bearbeiten', key=f'edit-{idx}'):
+			
+			col2.write(f"**{row['name']}**")
+			interval_text = "Monatlich" if row['interval'] == 'Monthly' else "Jährlich" if row['interval'] == 'Yearly' else "Quartalsweise"
+			col2.caption(f"Nächste Verlängerung: {next_renewal.strftime('%d.%m.%Y')}")
+			
+			col3.write(f"{row['amount']:.2f}€")
+			col3.caption(interval_text)
+			
+			status = "✅ Aktiv" if row['active'] else "❌ Inaktiv"
+			col4.write(status)
+			
+			if editable and col5.button('✏️', key=f'edit-{idx}', help='Bearbeiten'):
 				st.session_state['edit_idx'] = idx
 				_rerun()
 
@@ -124,8 +168,8 @@ if 'edit_idx' in st.session_state:
 			c1, c2 = st.columns(2)
 			ename = c1.text_input('Name', value=row['name'])
 			estart = st.date_input('Startdatum', value=row['start_date'] if not pd.isna(row['start_date']) else date.today())
-			eamount = st.number_input('Betrag', min_value=0.0, value=float(row['amount']), step=0.5)
-			einterval = st.selectbox('Intervall', ['Monthly','Yearly','Quarterly'], index=['Monthly','Yearly','Quarterly'].index(row['interval']) if row['interval'] in ['Monthly','Yearly','Quarterly'] else 0)
+			eamount = st.number_input('Betrag (CHF)', min_value=0.0, value=float(row['amount']), step=0.5)
+			einterval = st.selectbox('Intervall', ['Monatlich','Jährlich','Quartalsweise'], index=['Monatlich','Jährlich','Quartalsweise'].index('Monatlich' if row['interval'] == 'Monthly' else 'Jährlich' if row['interval'] == 'Yearly' else 'Quartalsweise'))
 			eactive = st.checkbox('Aktiv', value=bool(row['active']))
 			elink = c2.text_input('Link (URL)', value=row.get('link',''))
 			eicon = st.selectbox('Icon', options=list(ICON_OPTIONS.keys()), format_func=lambda x: f"{x} {ICON_OPTIONS[x]}", index=list(ICON_OPTIONS.keys()).index(row.get('icon', '📱')) if row.get('icon') in ICON_OPTIONS else 0)
@@ -133,10 +177,11 @@ if 'edit_idx' in st.session_state:
 			if col1.form_submit_button('Speichern'):
 				sd = pd.to_datetime(estart, errors='coerce')
 				sd = sd.date() if not pd.isna(sd) else None
+				interval_map = {'Monatlich': 'Monthly', 'Jährlich': 'Yearly', 'Quartalsweise': 'Quarterly'}
 				subs.at[edit_idx, 'name'] = ename
 				subs.at[edit_idx, 'start_date'] = sd
 				subs.at[edit_idx, 'amount'] = float(eamount)
-				subs.at[edit_idx, 'interval'] = einterval
+				subs.at[edit_idx, 'interval'] = interval_map.get(einterval, 'Monthly')
 				subs.at[edit_idx, 'active'] = bool(eactive)
 				subs.at[edit_idx, 'link'] = elink
 				subs.at[edit_idx, 'icon'] = eicon
@@ -155,32 +200,44 @@ if 'edit_idx' in st.session_state:
 		st.error('Ungültiges Abo zum Bearbeiten')
 		del st.session_state['edit_idx']
 else:
+	# Metriken oben anzeigen
+	metrics = _calculate_metrics(subs)
+	col1, col2, col3 = st.columns(3)
+	with col1.container():
+		st.metric("Monatliche Kosten", f"CHF {metrics['monthly']:.2f}")
+	with col2.container():
+		st.metric("Jährliche Kosten", f"CHF {metrics['yearly']:.2f}")
+	with col3.container():
+		st.metric("Aktive Abos", metrics['active_count'])
+	
+	st.divider()
+	
 	# Show tabs only when not editing
-	tab_all, tab_monthly, tab_yearly = st.tabs(['Alle','Monatlich','Jährlich'])
+	tab_alle, tab_monatlich, tab_jährlich = st.tabs(['Alle', 'Monatlich', 'Jährlich'])
 
-	with tab_all:
-		st.header('Alle Abonnemente')
+	with tab_alle:
+		st.header('Alle Abonnements')
 		_render_subscription_cards(subs, editable=True)
 
-	with tab_monthly:
-		st.header('Monatliche Abonnemente')
+	with tab_monatlich:
+		st.header('Monatliche Abonnements')
 		dfm = subs[subs['interval']=='Monthly'] if not subs.empty else subs
 		_render_subscription_cards(dfm, editable=False)
 
-	with tab_yearly:
-		st.header('Jährliche Abonnemente')
+	with tab_jährlich:
+		st.header('Jährliche Abonnements')
 		dfy = subs[subs['interval']=='Yearly'] if not subs.empty else subs
 		_render_subscription_cards(dfy, editable=False)
 
 	st.divider()
 
-	with st.expander('➕ Neues Abo erfassen'):
+	with st.expander('Neues Abo erfassen'):
 		with st.form('add_sub'):
 			c1, c2 = st.columns(2)
 			name = c1.text_input('Name')
 			start_date = st.date_input('Startdatum', value=date.today())
-			amount = st.number_input('Betrag', min_value=0.0, value=0.0, step=0.5)
-			interval = st.selectbox('Intervall', ['Monthly','Yearly','Quarterly'])
+			amount = st.number_input('Betrag (CHF)', min_value=0.0, value=0.0, step=0.5)
+			interval = st.selectbox('Intervall', ['Monatlich','Jährlich','Quartalsweise'])
 			active = st.checkbox('Aktiv', value=True)
 			link = c2.text_input('Link (URL)')
 			icon = st.selectbox('Icon', options=list(ICON_OPTIONS.keys()), format_func=lambda x: f"{x} {ICON_OPTIONS[x]}")
@@ -188,10 +245,12 @@ else:
 				# ensure start_date is stored as a date (no time component)
 				sd = pd.to_datetime(start_date, errors='coerce')
 				sd = sd.date() if not pd.isna(sd) else None
-				rec = {'name':name,'start_date':sd,'amount':float(amount),'interval':interval,'active':active,'link': link, 'icon': icon}
+				interval_map = {'Monatlich': 'Monthly', 'Jährlich': 'Yearly', 'Quartalsweise': 'Quarterly'}
+				rec = {'name':name,'start_date':sd,'amount':float(amount),'interval':interval_map[interval],'active':active,'link': link, 'icon': icon}
 				subs = pd.concat([subs, pd.DataFrame([rec])], ignore_index=True)
 				_save(subs)
 				st.success('Abonnement hinzugefügt')
+				_rerun()
 
 
 
