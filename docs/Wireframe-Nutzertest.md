@@ -1,23 +1,12 @@
 ## Hypothese:
-### Was wissen wir?
-Wir wissen, dass Menschen ähnliche Apps nutzen.
-
-### Was wissen wir nicht?
-Wir wissen nicht, ob diese ähnlichen Apps gut sind, dass es alle zufrieden benutzen können.
-
-### Was möchten wir testen?
-Wir möchten testen, ob die Nutzer durch die App eine einfache gute Übersicht über ihre Abos haben und es eine verständliche Bedienung ist.
-
-### Wie bewerten wir den Test?
-### Was ist ein Erfolg?
-Ob der Nutzer sich bewusst ist, welche Abos er wirklich braucht und welche unnötig sind und dabei unnötig Geld ausgibt.
-
+Wir wissen, dass Menschen ähnliche Apps benutzen. Jedoch wissen wir nicht, ob diese ähnlichen Apps gut genug sind, übersichtlich und einfach zu bedienen sind, dass es alle zufrieden benutzen können.
+Wir möchten testen, ob die Nutzer durch die App eine einfache gute Übersicht über ihre Abos haben können und diese dementsprechend unkompliziert verwalten können.
 
 ## Protokoll:
 ### Startseite:
 Nutzer 1: gut, klar
 Nutzer 2: gut
-Nutzer 3: gut, man sieht, was die App beinhalten
+Nutzer 3: gut, man sieht, was die App beinhaltet
 
 ### Registrierung:
 Nutzer 1: übersichtlich
@@ -47,24 +36,22 @@ Nutzer 3: am Besten auf Deutsch übersetzen, sonst gut
 
 ## Stichworte zu den vier Punkten des Test-Rasters:
 ### Was war gut?
-Nutzer 1: Nur die wichtigsten Angaben mussten angegeben werden. Basic, man wusste, wie es abläuft.
-Nutzer 2: Die Übersichtstabelle aller Abonnements finde ich gut und übersichtlich gestaltet.
-Nutzer 3: Sauber und ausführlich. Wenn man Passwort vergessen hat, kann man immer noch ein Neues machen.
+- Nur die wichtigsten Angaben mussten angegeben werden.
+- Basic, man wusste, wie es abläuft.
+- Die Übersichtstabelle aller Abonnements finde ich gut und übersichtlich gestaltet.
+- Sauber und ausführlich. Wenn man Passwort vergessen hat, kann man immer noch ein Neues machen.
 
 ### Was war schlecht?
-Nutzer 1: Buttons wie "Weiter", "Bestätigen", usw. fehlen.
-Nutzer 2: -
-Nutzer 3: Design besser gestalten
+- Buttons wie "Weiter", "Bestätigen", usw. fehlen.
+- Design besser gestalten
+- "Captcha" und nicht "Cache"
 
 ### Neue Ideen?
-Nutzer 1: Man könnte noch eine E-Mail-Bestätigung nach der Registrierung machen.
-Nutzer 2: Bei der Registrierung könnte man beim Feld "Cache" ein Info-icon(i) hinzufügen, das beim Anklicken kurz erklärt, was zu tun ist, um Verwirrung zu vermeiden.
-Nutzer 3: Kaitas Viereck, wie eine App
-
+- Man könnte noch eine E-Mail-Bestätigung nach der Registrierung machen.
+- Bei der Registrierung könnte man beim Feld "Cache" ein Info-icon(i) hinzufügen, das beim Anklicken kurz erklärt, was zu tun ist, um Verwirrung zu vermeiden.
+-  Kaitas Viereck, wie eine App
 - Dass es alle Abonnements noch zusammenrechnet und am Schluss ein Totalbetrag anzeigt.
 - Mehr Elemente hinzufügen.
 
 ### Neue Probleme?
-Nutzer 1: -
-Nutzer 2: -
-Nutzer 3: Nicht genügend Bestätigungsknöpfe. Übersetzen auf Deutsch
+- Nicht genügend Bestätigungsknöpfe. Übersetzen auf Deutsch

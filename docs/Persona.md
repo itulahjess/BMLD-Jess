@@ -6,7 +6,7 @@ Alter: 37 Jahre
 Leon lebt in Schlieren mit seiner Freundin Angelika. Er arbeitet in der Versicherung und seine Freundin im Detailhandel in Müller. In seiner Freizeit geht er gerne ins Gym, spielt online Games und schaut gerne Filme und Serien. Die beiden haben sich vor Kurzem verlobt und sind momentan in der Hochzeitsplanung. Weil er oft online unterwegs ist, hat er viele Abos ausgelöst für sich wie auch für seine Freundin und hat keinen Überblick mehr, wo er wie viel zahlt. Er bezahlt dies alles digital und hat dementsprechend nicht wirklich ein Gefühl, wie viel Geld er ausgibt. Da er sich digital sehr gut auskennt, erledigt er auch das meiste digital.
 
 ### Problem, welches gelöst werden soll: 
-Leon löst einfach Abos aus, um seine Bedürfnisse zu stillen. Benutzt es jedoch nicht konsequent und vergisst, dass das Abo noch vorhanden ist oder zu kündigen. Durch die Hochzeitsplanung fallen noch mehr und höhere Kosten an. Er merkt, dass sein Geld schnell schwindet. Er braucht eine einfache App, in der er eine Übersicht über seine Abos und die Kosten hat.
+Leon schliesst Abos oft spontan ab, um seine Bedürfnisse zu erfüllen. Er nutzt diese jedoch nicht konsequent und vergisst häufig, dass ein Abo noch besteht oder rechtzeitig gekündigt werden muss. Durch die Hochzeitsplanung kommen zusätzlich weitere und höhere Kosten hinzu, und er merkt, dass sein Geld schnell schwindet. Daher benötigt er eine einfache App, mit der er eine klare Übersicht über seine Abos und die damit verbundenen Kosten hat.
 
 ### Bedürfnisse: 
 -	Einfache und schnelle Bedienung der App
@@ -27,13 +27,13 @@ Leon löst einfach Abos aus, um seine Bedürfnisse zu stillen. Benutzt es jedoch
 Leon mag einfache Wege, um etwas anzuwenden. Er hat eine Abneigung, zu komplizierte und lange Registrierungen. Dashboards, die übersichtlich dargestellt sind, bevorzugt er am liebsten, denn diese führen nicht zur Verwirrung. 
 
 ### Das ärgert mich immer wieder: 
-Das E-Banking ist nicht ganz übersichtlich bezüglich der Ausgaben der Abos, weil alle Transaktionen zu sehen sind. Für Leon ist das ärgerlich, da er nicht herausfiltern kann, wie viel er insgesamt für seine Abos bezahlt.
+Das E-Banking ist in Bezug auf die Abonnement-Ausgaben nicht besonders übersichtlich, da alle Transaktionen angezeigt werden. Für Leon ist das ärgerlich, weil er nicht gezielt herausfiltern kann, wie viel er insgesamt für seine Abos bezahlt.
 
 ### Lifestyle/Mode/Produkte: 
-Leon ist ein gelassener Typ, der gerne seine Zeit zu Hause mit gamen oder zusammen mit seiner Verlobten beim Serien schauen verbringt. Leon kleidet sich schick, weil er bei der Versicherung arbeitet und in seiner Freizeit trägt er gemütliche Kleidung. Er nutzt jeden Tag sein Handy, sein Laptop, seinen PC und seine Applewatch. Er erledigt alle Einkäufe und Finanzen online und trägt so gut wie nie Bargeld mit sich.
+Leon ist ein gelassener Typ, der seine Zeit gerne zu Hause verbringt, sei es beim Gamen oder beim gemeinsamen Serienschauen mit seiner Verlobten. Er kleidet sich schick, da er bei einer Versicherung arbeitet, während er in seiner Freizeit lieber gemütliche Kleidung trägt. Leon nutzt täglich sein Handy, seinen Laptop, seinen PC und seine Apple Watch. Einkäufe und Finanzen erledigt er vollständig online, weshalb er so gut wie nie Bargeld bei sich trägt.
 
 ### Mein schönstes Produkterlebnis: 
-Excel benutzt Leon täglich bei der Arbeit und kennt sich sehr gut damit aus. Auch in seinem privaten Leben benutzt er es manchmal, um eine Übersicht über etwas darzustellen. Für seine Hochzeitsplanung benutzt er es sehr gerne, denn er kann alles Mögliche aufschreiben und trotzdem eine Übersicht haben. Dies wünscht er sich auch bei dieser App, eine übersichtliche Darstellung und ein einfacher Zugriff darauf.
+Excel nutzt Leon täglich bei der Arbeit und er kennt sich damit sehr gut aus. Auch in seinem privaten Leben verwendet er es gelegentlich, um sich einen Überblick über verschiedene Dinge zu verschaffen. Für seine Hochzeitsplanung nutzt er Excel besonders gerne, da er dort alles Mögliche festhalten und dennoch den Überblick behalten kann. Genau das wünscht er sich auch von dieser App: eine übersichtliche Darstellung und einen einfachen Zugriff auf alle Informationen.
 
 ### Zitat: 
 „Keine komplizierte Finanzübersicht. Einfach auf einen Blick sehen, welche Abos laufen, was sie kosten und ob alles noch sinnvoll ist.“
