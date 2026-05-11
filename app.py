@@ -55,7 +55,7 @@ if 'data_df' not in st.session_state:
 
 
 pg_home = st.Page("views/home.py", title="Home", icon=":material/home:", default=True)
-pg_second = st.Page("views/unterseite_a.py", title="Abo-Verwaltung", icon=":material/info:")
+pg_second = st.Page("views/Aboverwaltung.py", title="Abo-Verwaltung", icon=":material/subscriptions:")
 
 pg = st.navigation([pg_home, pg_second])
 pg.run()
