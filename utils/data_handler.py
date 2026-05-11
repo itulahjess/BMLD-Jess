@@ -1,6 +1,10 @@
-import json, yaml, posixpath
+import json, yaml, posixpath, time
 import pandas as pd
 from io import StringIO
+
+# simple retry/backoff parameters for network reads
+_RETRIES = 3
+_BACKOFF_FACTOR = 0.5
 
 class DataHandler:
     def __init__(self, filesystem, root_path):
@@ -40,7 +44,11 @@ class DataHandler:
             True if the file exists, False otherwise.
         """
         full_path = self._resolve_path(relative_path)
-        return self.filesystem.exists(full_path)
+        try:
+            return self.filesystem.exists(full_path)
+        except Exception:
+            # treat errors (network issues) as non-existence to avoid crashing callers
+            return False
 
     def read_text(self, relative_path):
         """
@@ -53,8 +61,17 @@ class DataHandler:
             The content of the file as a string.
         """
         full_path = self._resolve_path(relative_path)
-        with self.filesystem.open(full_path, "r", encoding='utf-8') as f:
-            return f.read()
+        last_exc = None
+        for attempt in range(_RETRIES):
+            try:
+                with self.filesystem.open(full_path, "r", encoding='utf-8') as f:
+                    return f.read()
+            except Exception as e:
+                last_exc = e
+                if attempt < _RETRIES - 1:
+                    time.sleep(_BACKOFF_FACTOR * (2 ** attempt))
+                    continue
+                raise
 
     def read_binary(self, relative_path):
         """
@@ -67,8 +84,17 @@ class DataHandler:
             The content of the file as bytes.
         """
         full_path = self._resolve_path(relative_path)
-        with self.filesystem.open(full_path, "rb") as f:
-            return f.read()
+        last_exc = None
+        for attempt in range(_RETRIES):
+            try:
+                with self.filesystem.open(full_path, "rb") as f:
+                    return f.read()
+            except Exception as e:
+                last_exc = e
+                if attempt < _RETRIES - 1:
+                    time.sleep(_BACKOFF_FACTOR * (2 ** attempt))
+                    continue
+                raise
 
     def write_text(self, relative_path, content):
         """
