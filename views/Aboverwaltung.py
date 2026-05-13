@@ -102,43 +102,50 @@ def _calculate_metrics(df):
 	}
 
 
-subs = _load()
-
-
-def _safe_delete(index):
-	"""Try to delete a subscription by original index without throwing errors to the UI.
-	If the index is already gone or deletion fails, quietly refresh the UI and show a friendly notice.
-	"""
-	try:
-		if index in subs.index:
-			subs.drop(index=index, inplace=True)
-			subs.reset_index(drop=True, inplace=True)
-			_save(subs)
-			_rerun()
-		else:
-			# already deleted by another action — refresh silently
-			_rerun()
-	except Exception:
-		# do not show a full traceback to the user; give a short message and refresh
-		st.warning('Löschen fehlgeschlagen. Bitte die Seite neu laden oder erneut versuchen.')
-		_rerun()
+def _calculate_next_renewal(start_date, interval):
+	"""Berechnet das nächste Verlängerungsdatum"""
+	if pd.isna(start_date):
+		return date.today()
+	
+	next_renewal = start_date
+	today = date.today()
+	
+	# Limit iterations to prevent infinite loops
+	max_iterations = 100
+	iterations = 0
+	
+	if interval == 'Monthly':
+		while next_renewal <= today and iterations < max_iterations:
+			try:
+				# Add one month
+				if next_renewal.month == 12:
+					next_renewal = next_renewal.replace(year=next_renewal.year + 1, month=1)
+				else:
+					next_renewal = next_renewal.replace(month=next_renewal.month + 1)
+			except ValueError:
+				# Handle day overflow (e.g., Jan 31 -> Feb 31 doesn't exist)
+				next_renewal = next_renewal.replace(day=1) + timedelta(days=32)
+				next_renewal = next_renewal.replace(day=1)
+			iterations += 1
+	elif interval == 'Yearly':
+		while next_renewal <= today and iterations < max_iterations:
+			next_renewal = next_renewal.replace(year=next_renewal.year + 1)
+			iterations += 1
+	elif interval == 'Quarterly':
+		while next_renewal <= today and iterations < max_iterations:
+			next_renewal = next_renewal + timedelta(days=91)
+			iterations += 1
+	
+	return next_renewal
 
 
 def _render_subscription_cards(df, editable=True):
 	if df.empty:
 		st.info('Keine Abonnements gefunden')
 		return
+	
 	for idx, row in df.iterrows():
-		# Berechne nächste Verlängerung
-		next_renewal = row['start_date']
-		if row['interval'] == 'Monthly':
-			while next_renewal <= date.today():
-				next_renewal = next_renewal.replace(day=1) + timedelta(days=32)
-				next_renewal = next_renewal.replace(day=1) - timedelta(days=1)
-				next_renewal = next_renewal.replace(day=row['start_date'].day)
-		elif row['interval'] == 'Yearly':
-			while next_renewal <= date.today():
-				next_renewal = next_renewal.replace(year=next_renewal.year + 1)
+		next_renewal = _calculate_next_renewal(row['start_date'], row['interval'])
 		
 		with st.container():
 			col1, col2, col3, col4, col5 = st.columns([0.8, 2, 1.5, 1, 0.5])
@@ -159,11 +166,14 @@ def _render_subscription_cards(df, editable=True):
 				_rerun()
 
 
+# Load data
+subs = _load()
+
 # Edit form as separate "page"
 if 'edit_idx' in st.session_state:
 	edit_idx = st.session_state['edit_idx']
-	if edit_idx in subs.index:
-		row = subs.loc[edit_idx]
+	if edit_idx < len(subs):
+		row = subs.iloc[edit_idx]
 		st.header(f"Abonnement bearbeiten: {row['icon']} {row['name']}")
 		with st.form('edit_sub'):
 			c1, c2 = st.columns(2)
@@ -191,15 +201,18 @@ if 'edit_idx' in st.session_state:
 				st.success('Änderungen gespeichert')
 				_rerun()
 			if col2.form_submit_button('Löschen'):
-				_safe_delete(edit_idx)
+				subs = subs.drop(index=edit_idx).reset_index(drop=True)
+				_save(subs)
 				del st.session_state['edit_idx']
+				st.success('Abonnement gelöscht')
 				_rerun()
 			if col3.form_submit_button('Abbrechen'):
 				del st.session_state['edit_idx']
 				_rerun()
 	else:
 		st.error('Ungültiges Abo zum Bearbeiten')
-		del st.session_state['edit_idx']
+		if 'edit_idx' in st.session_state:
+			del st.session_state['edit_idx']
 else:
 	# Metriken oben anzeigen
 	metrics = _calculate_metrics(subs)
@@ -243,14 +256,17 @@ else:
 			link = c2.text_input('Link (URL)')
 			icon = st.selectbox('Icon', options=list(ICON_OPTIONS.keys()), format_func=lambda x: f"{x} {ICON_OPTIONS[x]}")
 			if st.form_submit_button('Hinzufügen'):
-				# ensure start_date is stored as a date (no time component)
-				sd = pd.to_datetime(start_date, errors='coerce')
-				sd = sd.date() if not pd.isna(sd) else None
-				interval_map = {'Monatlich': 'Monthly', 'Jährlich': 'Yearly', 'Quartalsweise': 'Quarterly'}
-				rec = {'name':name,'start_date':sd,'amount':float(amount),'interval':interval_map[interval],'active':active,'link': link, 'icon': icon}
-				subs = pd.concat([subs, pd.DataFrame([rec])], ignore_index=True)
-				_save(subs)
-				st.success('Abonnement hinzugefügt')
+				if not name:
+					st.error('Bitte geben Sie einen Namen ein')
+				else:
+					sd = pd.to_datetime(start_date, errors='coerce')
+					sd = sd.date() if not pd.isna(sd) else None
+					interval_map = {'Monatlich': 'Monthly', 'Jährlich': 'Yearly', 'Quartalsweise': 'Quarterly'}
+					rec = {'name':name,'start_date':sd,'amount':float(amount),'interval':interval_map[interval],'active':active,'link': link, 'icon': icon}
+					subs = pd.concat([subs, pd.DataFrame([rec])], ignore_index=True)
+					_save(subs)
+					st.success('Abonnement hinzugefügt')
+					_rerun()
 				_rerun()
 
 

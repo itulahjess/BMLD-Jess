@@ -130,7 +130,7 @@ class LoginManager:
     .login-title{font-size:16spx;font-weight:700;color:#054033;margin:0}
         .login-sub{color:#0f5132;margin-top:6px}
         /* inputs and buttons */
-        input[type='text'], input[type='password'], input[type='number'], textarea{border-radius:8px;border:1px solid #e6f2ec;padding:10px;background:#f7fffb}
+        input[type='text'], input[type='password'], input[type='number'], textarea{border-radius:8px;border:1px solid #e6f2ec;padding:10px;background:#f7fffb;color:#000000}
         button, .stButton>button{background:var(--mint-strong)!important;color:#ffffff!important;border-radius:8px!important;padding:8px 14px!important;border:none!important;box-shadow:0 6px 18px rgba(86,196,157,0.16)!important}
         /* subtle card for tabs content */
         .stTabs [role='tablist']{margin-bottom:6px}
