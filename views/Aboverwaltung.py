@@ -267,7 +267,6 @@ else:
 					_save(subs)
 					st.success('Abonnement hinzugefügt')
 					_rerun()
-				_rerun()
 
 
 
