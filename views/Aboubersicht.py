@@ -10,7 +10,6 @@ if st.session_state.get('username') is None:
 	st.error('Kein Benutzer eingeloggt. Bitte zuerst anmelden.')
 	st.stop()
 
-# Icons
 ICON_OPTIONS = {
 	'📷': 'Kamera',
 	'📱': 'Smartphone',
@@ -29,35 +28,38 @@ ICON_OPTIONS = {
 	'💳': 'Finanzen'
 }
 
-# Load data
 df = dm.load_user_data('subscriptions.csv', initial_value=pd.DataFrame())
 
 if df is None or df.empty:
 	st.info('Keine Abonnements vorhanden.')
 	st.stop()
 
-# Prepare data
 if 'start_date' in df.columns:
 	df['start_date'] = pd.to_datetime(df['start_date'], errors='coerce').dt.date
 
 df['amount'] = pd.to_numeric(df['amount'], errors='coerce').fillna(0.0)
 df['active'] = df.get('active', True)
 
-# Metrics
 col1, col2, col3, col4 = st.columns(4)
 
-active_count = len(df[df['active'] == True])
+active_df = df[df['active'] == True]
+
+active_count = len(active_df)
 inactive_count = len(df[df['active'] == False])
-total_cost = df[df['active'] == True]['amount'].sum()
+
+monthly_cost = active_df[active_df['interval'] == 'Monthly']['amount'].sum()
+yearly_cost = active_df[active_df['interval'] == 'Yearly']['amount'].sum()
+quarterly_cost = active_df[active_df['interval'] == 'Quarterly']['amount'].sum()
+
+total_monthly_cost = monthly_cost + (yearly_cost / 12) + (quarterly_cost / 3)
 
 col1.metric("Aktive Abos", active_count)
 col2.metric("Inaktive Abos", inactive_count)
-col3.metric("Monatliche Kosten", f"CHF {total_cost:.2f}")
+col3.metric("Monatliche Kosten", f"CHF {total_monthly_cost:.2f}")
 col4.metric("Gesamtanzahl", len(df))
 
 st.divider()
 
-# Edit mode
 if "edit_idx" in st.session_state:
 
 	edit_idx = st.session_state["edit_idx"]
@@ -85,10 +87,7 @@ if "edit_idx" in st.session_state:
 				index=["Monthly", "Yearly", "Quarterly"].index(row["interval"])
 			)
 
-			active = st.checkbox(
-				"Aktiv",
-				value=bool(row["active"])
-			)
+			active = st.checkbox("Aktiv", value=bool(row["active"]))
 
 			icon = st.selectbox(
 				'Icon',
@@ -122,7 +121,6 @@ if "edit_idx" in st.session_state:
 
 	st.divider()
 
-# Cards
 st.subheader("Alle Abonnements")
 
 def render_subscription_cards(df):
@@ -177,7 +175,6 @@ render_subscription_cards(df)
 
 st.divider()
 
-# Summary
 st.subheader("Zusammenfassung nach Intervall")
 
 col1, col2, col3 = st.columns(3)
