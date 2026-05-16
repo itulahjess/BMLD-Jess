@@ -213,19 +213,22 @@ if 'edit_idx' in st.session_state:
 		st.error('Ungültiges Abo zum Bearbeiten')
 		if 'edit_idx' in st.session_state:
 			del st.session_state['edit_idx']
+	
 else:
 	# Metriken oben anzeigen
 	metrics = _calculate_metrics(subs)
 	col1, col2, col3 = st.columns(3)
-	with col1.container():
+	with col1:
 		st.metric("Monatliche Kosten", f"CHF {metrics['monthly']:.2f}")
-	with col2.container():
+	with col2:
 		st.metric("Jährliche Kosten", f"CHF {metrics['yearly']:.2f}")
-	with col3.container():
+	with col3:
 		st.metric("Aktive Abos", metrics['active_count'])
-	
+
 	st.divider()
-	
+
+
+
 	# Show tabs only when not editing
 	tab_alle, tab_monatlich, tab_jährlich = st.tabs(['Alle', 'Monatlich', 'Jährlich'])
 
