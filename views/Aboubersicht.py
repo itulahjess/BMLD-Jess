@@ -1,25 +1,45 @@
 import streamlit as st
 import pandas as pd
-from datetime import date
 from utils.data_manager import DataManager
-
 
 st.title("Aboübersicht")
 
 dm = DataManager()
+
 if st.session_state.get('username') is None:
 	st.error('Kein Benutzer eingeloggt. Bitte zuerst anmelden.')
 	st.stop()
 
-# Load subscriptions
+# Icons
+ICON_OPTIONS = {
+	'📷': 'Kamera',
+	'📱': 'Smartphone',
+	'🎵': 'Musik',
+	'📺': 'TV',
+	'🎮': 'Spiele',
+	'📚': 'Bücher',
+	'💼': 'Geschäft',
+	'🏠': 'Zuhause',
+	'🍎': 'Apple',
+	'🎥': 'Video',
+	'🌐': 'Web',
+	'📧': 'E-Mail',
+	'📰': 'Nachrichten',
+	'🎬': 'Unterhaltung',
+	'💳': 'Finanzen'
+}
+
+# Load data
 df = dm.load_user_data('subscriptions.csv', initial_value=pd.DataFrame())
+
 if df is None or df.empty:
-	st.info('Keine Abonnements vorhanden. Bitte gehen Sie zur Abo-Verwaltung, um Abos hinzuzufügen.')
+	st.info('Keine Abonnements vorhanden.')
 	st.stop()
 
 # Prepare data
 if 'start_date' in df.columns:
 	df['start_date'] = pd.to_datetime(df['start_date'], errors='coerce').dt.date
+
 df['amount'] = pd.to_numeric(df['amount'], errors='coerce').fillna(0.0)
 df['active'] = df.get('active', True)
 
@@ -37,19 +57,127 @@ col4.metric("Gesamtanzahl", len(df))
 
 st.divider()
 
-# Display all subscriptions as table
+# Edit mode
+if "edit_idx" in st.session_state:
+
+	edit_idx = st.session_state["edit_idx"]
+
+	if edit_idx < len(df):
+
+		row = df.iloc[edit_idx]
+
+		st.subheader(f"Abonnement bearbeiten: {row['name']}")
+
+		with st.form("edit_subscription"):
+
+			name = st.text_input("Name", value=row["name"])
+
+			amount = st.number_input(
+				"Betrag (CHF)",
+				min_value=0.0,
+				value=float(row["amount"]),
+				step=0.5
+			)
+
+			interval = st.selectbox(
+				"Intervall",
+				["Monthly", "Yearly", "Quarterly"],
+				index=["Monthly", "Yearly", "Quarterly"].index(row["interval"])
+			)
+
+			active = st.checkbox(
+				"Aktiv",
+				value=bool(row["active"])
+			)
+
+			icon = st.selectbox(
+				'Icon',
+				options=list(ICON_OPTIONS.keys()),
+				format_func=lambda x: f"{x} {ICON_OPTIONS[x]}",
+				index=list(ICON_OPTIONS.keys()).index(row.get('icon', '📱'))
+				if row.get('icon') in ICON_OPTIONS else 0
+			)
+
+			col1, col2 = st.columns(2)
+
+			if col1.form_submit_button("Speichern"):
+
+				df.at[edit_idx, "name"] = name
+				df.at[edit_idx, "amount"] = amount
+				df.at[edit_idx, "interval"] = interval
+				df.at[edit_idx, "active"] = active
+				df.at[edit_idx, "icon"] = icon
+
+				dm.save_user_data(df, "subscriptions.csv")
+
+				del st.session_state["edit_idx"]
+
+				st.success("Abonnement aktualisiert")
+				st.rerun()
+
+			if col2.form_submit_button("Abbrechen"):
+
+				del st.session_state["edit_idx"]
+				st.rerun()
+
+	st.divider()
+
+# Cards
 st.subheader("Alle Abonnements")
 
-display_df = df[['name', 'amount', 'interval', 'active', 'start_date']].copy()
-display_df.columns = ['Name', 'Betrag (CHF)', 'Intervall', 'Status', 'Startdatum']
-display_df['Status'] = display_df['Status'].apply(lambda x: '✅ Aktiv' if x else '❌ Inaktiv')
-display_df['Intervall'] = display_df['Intervall'].apply(lambda x: 'Monatlich' if x == 'Monthly' else 'Jährlich' if x == 'Yearly' else 'Quartalsweise')
+def render_subscription_cards(df):
 
-st.dataframe(display_df, use_container_width=True)
+	if df.empty:
+		st.info("Keine Abonnements gefunden")
+		return
+
+	for idx, row in df.iterrows():
+
+		with st.container():
+
+			col1, col2, col3, col4, col5 = st.columns([0.6, 2, 1.5, 1, 0.8])
+
+			icon = row.get("icon", "📱")
+			col1.write(icon)
+
+			col2.write(f"**{row['name']}**")
+			col2.caption(f"Startdatum: {row['start_date']}")
+
+			interval_text = (
+				"Monatlich"
+				if row["interval"] == "Monthly"
+				else "Jährlich"
+				if row["interval"] == "Yearly"
+				else "Quartalsweise"
+			)
+
+			col3.write(f"CHF {row['amount']:.2f}")
+			col3.caption(interval_text)
+
+			status = "✅ Aktiv" if row["active"] else "❌ Inaktiv"
+			col4.write(status)
+
+			edit_col, delete_col = col5.columns(2)
+
+			if edit_col.button("✏️", key=f"edit-{idx}"):
+
+				st.session_state["edit_idx"] = idx
+				st.rerun()
+
+			if delete_col.button("🗑️", key=f"delete-{idx}"):
+
+				df = df.drop(index=idx).reset_index(drop=True)
+
+				dm.save_user_data(df, "subscriptions.csv")
+
+				st.success("Abonnement gelöscht")
+				st.rerun()
+
+render_subscription_cards(df)
 
 st.divider()
 
-# Summary by interval
+# Summary
 st.subheader("Zusammenfassung nach Intervall")
 
 col1, col2, col3 = st.columns(3)

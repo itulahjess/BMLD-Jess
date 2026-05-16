@@ -155,7 +155,7 @@ def _render_subscription_cards(df, editable=True):
 			interval_text = "Monatlich" if row['interval'] == 'Monthly' else "Jährlich" if row['interval'] == 'Yearly' else "Quartalsweise"
 			col2.caption(f"Nächste Verlängerung: {next_renewal.strftime('%d.%m.%Y')}")
 			
-			col3.write(f"{row['amount']:.2f}€")
+			col3.write(f"CHF {row['amount']:.2f}")
 			col3.caption(interval_text)
 			
 			status = "✅ Aktiv" if row['active'] else "❌ Inaktiv"
