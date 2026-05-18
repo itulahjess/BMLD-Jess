@@ -4,6 +4,25 @@ from utils.data_manager import DataManager
 
 st.markdown("""
 <style>
+/* ---------- GLOBAL PAGE STYLE ---------- */
+
+.stApp {
+	background:
+		radial-gradient(circle at top right, rgba(116, 222, 188, 0.22), transparent 34%),
+		radial-gradient(circle at bottom left, rgba(203, 245, 229, 0.35), transparent 38%),
+		#f5fbf8;
+	color: #2f3038;
+}
+
+/* Makes the page feel more spacious */
+.block-container {
+	padding-top: 2.2rem;
+	padding-bottom: 3rem;
+	max-width: 1350px;
+}
+
+/* ---------- HEADER ---------- */
+
 .header {
 	display: flex;
 	align-items: center;
@@ -15,13 +34,17 @@ st.markdown("""
 
 .logo {
 	width: 360px;
+	border-radius: 18px;
+	filter: drop-shadow(0 12px 25px rgba(0, 0, 0, 0.06));
 }
 
 .app-title {
-	font-size: 48px;
+	font-size: 52px;
 	font-weight: 900;
 	color: #2f3038;
 	margin-bottom: 5px;
+	letter-spacing: -1.5px;
+	line-height: 1.05;
 }
 
 .subtitle {
@@ -31,81 +54,205 @@ st.markdown("""
 	margin-bottom: 35px;
 }
 
+/* ---------- HERO BOX ---------- */
+
 .hero-box {
-	background: linear-gradient(135deg, #e8fff5, #f6fffb);
-	padding: 35px;
-	border-radius: 28px;
-	margin-bottom: 30px;
+	position: relative;
+	overflow: hidden;
+	background:
+		linear-gradient(135deg, rgba(232, 255, 245, 0.95), rgba(255, 255, 255, 0.78));
+	padding: 42px 35px;
+	border-radius: 32px;
+	margin-bottom: 34px;
 	text-align: center;
-	box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+	box-shadow: 0 18px 45px rgba(31, 122, 99, 0.09);
+	border: 1px solid rgba(95, 208, 173, 0.18);
+	backdrop-filter: blur(14px);
+	transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.hero-box:hover {
+	transform: translateY(-3px);
+	box-shadow: 0 24px 55px rgba(31, 122, 99, 0.13);
+}
+
+/* Decorative blurred circle */
+.hero-box::before {
+	content: "";
+	position: absolute;
+	width: 230px;
+	height: 230px;
+	border-radius: 50%;
+	background: rgba(95, 208, 173, 0.17);
+	top: -90px;
+	right: -70px;
+	filter: blur(4px);
+}
+
+.hero-box::after {
+	content: "";
+	position: absolute;
+	width: 160px;
+	height: 160px;
+	border-radius: 50%;
+	background: rgba(223, 248, 236, 0.9);
+	bottom: -80px;
+	left: -50px;
+	filter: blur(8px);
 }
 
 .hero-title {
-	font-size: 32px;
-	font-weight: 800;
+	position: relative;
+	z-index: 1;
+	font-size: 34px;
+	font-weight: 900;
 	color: #054033;
+	letter-spacing: -0.5px;
 }
 
 .hero-text {
+	position: relative;
+	z-index: 1;
 	font-size: 17px;
 	color: #3b5f58;
-	margin-top: 10px;
+	margin-top: 12px;
 }
+
+/* ---------- METRIC CARDS ---------- */
 
 div[data-testid="stMetric"] {
-	background-color: #e8fff5;
-	padding: 22px;
-	border-radius: 20px;
-	box-shadow: 0 5px 14px rgba(0,0,0,0.05);
+	background:
+		linear-gradient(145deg, rgba(232, 255, 245, 0.95), rgba(255, 255, 255, 0.72));
+	padding: 24px 26px;
+	border-radius: 24px;
+	box-shadow: 0 14px 35px rgba(31, 122, 99, 0.08);
+	border: 1px solid rgba(95, 208, 173, 0.17);
+	backdrop-filter: blur(12px);
+	transition: transform 0.22s ease, box-shadow 0.22s ease, border 0.22s ease;
 }
 
-div[data-testid="stMetric"] * {
-	font-size: 22px !important;
+div[data-testid="stMetric"]:hover {
+	transform: translateY(-4px);
+	box-shadow: 0 20px 45px rgba(31, 122, 99, 0.14);
+	border: 1px solid rgba(95, 208, 173, 0.32);
+}
+
+div[data-testid="stMetric"] label {
+	font-size: 17px !important;
 	font-weight: 800 !important;
 	color: #054033 !important;
 }
 
 div[data-testid="stMetric"] [data-testid="stMetricValue"] {
-	font-size: 34px !important;
+	font-size: 32px !important;
 	font-weight: 900 !important;
 	color: #1b5e54 !important;
+	letter-spacing: -0.5px;
 }
 
+/* Removes unnecessary metric spacing */
+div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
+	display: none;
+}
+
+/* ---------- INFO CARDS ---------- */
+
 .info-card {
-	background: white;
-	border: 1px solid #dff5ec;
-	padding: 24px;
-	border-radius: 22px;
+	position: relative;
+	overflow: hidden;
+	background: rgba(255, 255, 255, 0.82);
+	border: 1px solid rgba(95, 208, 173, 0.18);
+	padding: 28px 24px;
+	border-radius: 26px;
 	text-align: center;
-	box-shadow: 0 5px 14px rgba(0,0,0,0.04);
-	height: 150px;
+	box-shadow: 0 14px 34px rgba(31, 122, 99, 0.07);
+	height: 165px;
+	backdrop-filter: blur(12px);
+	transition: transform 0.25s ease, box-shadow 0.25s ease, border 0.25s ease;
+}
+
+.info-card:hover {
+	transform: translateY(-6px);
+	box-shadow: 0 22px 48px rgba(31, 122, 99, 0.13);
+	border: 1px solid rgba(95, 208, 173, 0.34);
+}
+
+/* subtle shine effect */
+.info-card::before {
+	content: "";
+	position: absolute;
+	top: 0;
+	left: -80%;
+	width: 60%;
+	height: 100%;
+	background: linear-gradient(
+		90deg,
+		transparent,
+		rgba(255, 255, 255, 0.55),
+		transparent
+	);
+	transform: skewX(-18deg);
+	transition: left 0.65s ease;
+}
+
+.info-card:hover::before {
+	left: 125%;
 }
 
 .info-icon {
-	font-size: 34px;
-	margin-bottom: 8px;
+	font-size: 36px;
+	margin-bottom: 10px;
+	filter: drop-shadow(0 8px 12px rgba(31, 122, 99, 0.12));
 }
 
 .info-title {
 	font-size: 20px;
-	font-weight: 800;
+	font-weight: 900;
 	color: #054033;
+	letter-spacing: -0.2px;
 }
 
 .info-text {
 	font-size: 14px;
 	color: #52796f;
-	margin-top: 6px;
+	margin-top: 8px;
+	line-height: 1.45;
 }
 
+/* ---------- FOOTER ---------- */
+
 .footer {
-	margin-top: 45px;
+	margin-top: 52px;
 	text-align: center;
 	font-size: 12px;
 	color: #6b9080;
+	line-height: 1.55;
+	opacity: 0.9;
+}
+
+/* ---------- RESPONSIVE ---------- */
+
+@media (max-width: 900px) {
+	.hero-title {
+		font-size: 28px;
+	}
+
+	.hero-text {
+		font-size: 15px;
+	}
+
+	div[data-testid="stMetric"] [data-testid="stMetricValue"] {
+		font-size: 26px !important;
+	}
+
+	.info-card {
+		height: auto;
+		margin-bottom: 14px;
+	}
 }
 </style>
 """, unsafe_allow_html=True)
+
 
 dm = DataManager()
 
@@ -142,6 +289,7 @@ for _, row in active_subs.iterrows():
 		monthly_cost += float(row['amount']) / 3
 		yearly_cost += float(row['amount']) * 4
 
+
 name = st.session_state.get("name", "User")
 
 st.markdown(f"""
@@ -152,6 +300,7 @@ st.markdown(f"""
 	</div>
 </div>
 """, unsafe_allow_html=True)
+
 
 col1, col2, col3 = st.columns(3)
 
@@ -164,7 +313,9 @@ with col2:
 with col3:
 	st.metric("Aktive Abos", len(active_subs))
 
+
 st.markdown("<br>", unsafe_allow_html=True)
+
 
 c1, c2, c3 = st.columns(3)
 
@@ -194,6 +345,7 @@ with c3:
 		<div class="info-text">Plane dein Budget und behalte deine Ausgaben im Griff.</div>
 	</div>
 	""", unsafe_allow_html=True)
+
 
 st.markdown("""
 <div class="footer">
