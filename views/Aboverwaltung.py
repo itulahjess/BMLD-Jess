@@ -44,6 +44,8 @@ p, label, span {
 /* ---------- PAGE INTRO ---------- */
 
 .page-intro {
+	position: relative;
+	overflow: hidden;
 	background:
 		linear-gradient(135deg, rgba(232, 255, 245, 0.96), rgba(255, 255, 255, 0.76));
 	padding: 28px 32px;
@@ -54,7 +56,20 @@ p, label, span {
 	backdrop-filter: blur(14px);
 }
 
+.page-intro::before {
+	content: "";
+	position: absolute;
+	width: 190px;
+	height: 190px;
+	border-radius: 50%;
+	background: rgba(95, 208, 173, 0.14);
+	top: -80px;
+	right: -60px;
+}
+
 .page-intro-title {
+	position: relative;
+	z-index: 1;
 	font-size: 24px;
 	font-weight: 900;
 	color: #054033;
@@ -62,6 +77,8 @@ p, label, span {
 }
 
 .page-intro-text {
+	position: relative;
+	z-index: 1;
 	font-size: 15px;
 	color: #52796f;
 	line-height: 1.5;
@@ -93,24 +110,7 @@ div[data-baseweb="tab-highlight"] {
 	display: none;
 }
 
-/* ---------- SUBSCRIPTION CARDS ---------- */
-
-.subscription-card {
-	background: rgba(255, 255, 255, 0.82);
-	border: 1px solid rgba(95, 208, 173, 0.18);
-	border-radius: 26px;
-	padding: 20px 22px;
-	margin-bottom: 16px;
-	box-shadow: 0 14px 34px rgba(31, 122, 99, 0.07);
-	backdrop-filter: blur(12px);
-	transition: transform 0.24s ease, box-shadow 0.24s ease, border 0.24s ease;
-}
-
-.subscription-card:hover {
-	transform: translateY(-4px);
-	box-shadow: 0 22px 48px rgba(31, 122, 99, 0.13);
-	border: 1px solid rgba(95, 208, 173, 0.34);
-}
+/* ---------- SUBSCRIPTION ROWS ---------- */
 
 .sub-icon {
 	width: 54px;
@@ -121,7 +121,9 @@ div[data-baseweb="tab-highlight"] {
 	border-radius: 18px;
 	background: linear-gradient(145deg, rgba(232, 255, 245, 1), rgba(255, 255, 255, 0.75));
 	font-size: 28px;
-	box-shadow: inset 0 0 0 1px rgba(95, 208, 173, 0.16);
+	box-shadow:
+		inset 0 0 0 1px rgba(95, 208, 173, 0.16),
+		0 10px 22px rgba(31, 122, 99, 0.08);
 }
 
 .sub-name {
@@ -172,6 +174,12 @@ div[data-baseweb="tab-highlight"] {
 	color: #a13a3a;
 	font-weight: 800;
 	font-size: 14px;
+}
+
+.subscription-separator {
+	height: 1px;
+	background: rgba(95, 208, 173, 0.14);
+	margin: 22px 0;
 }
 
 /* ---------- STREAMLIT BUTTONS ---------- */
@@ -301,10 +309,6 @@ hr {
 
 	.page-intro {
 		padding: 24px;
-	}
-
-	.subscription-card {
-		padding: 18px;
 	}
 }
 </style>
@@ -521,10 +525,16 @@ def _render_subscription_cards(df, editable=True):
 
 		interval_text = _interval_to_text(row['interval'])
 
-		status_html = (
-			'<span class="status-active">✅ Aktiv</span>'
+		status_class = (
+			"status-active"
 			if row['active']
-			else '<span class="status-inactive">❌ Inaktiv</span>'
+			else "status-inactive"
+		)
+
+		status_text = (
+			"✅ Aktiv"
+			if row['active']
+			else "❌ Inaktiv"
 		)
 
 		icon = row.get('icon', '📱')
@@ -539,52 +549,51 @@ def _render_subscription_cards(df, editable=True):
 		else:
 			icon_html = f"<div class='sub-icon'>{icon}</div>"
 
-		with st.container():
+		col1, col2, col3, col4, col5 = st.columns(
+			[0.75, 2.2, 1.35, 1.1, 0.55]
+		)
 
-			st.markdown('<div class="subscription-card">', unsafe_allow_html=True)
+		with col1:
+			st.markdown(icon_html, unsafe_allow_html=True)
 
-			col1, col2, col3, col4, col5 = st.columns(
-				[0.75, 2.2, 1.35, 1.1, 0.55]
+		with col2:
+			st.markdown(
+				f"""
+				<div class="sub-name">{row['name']}</div>
+				<div class="sub-detail">
+					Nächste Verlängerung:<br>
+					<strong>{next_renewal.strftime('%d.%m.%Y')}</strong>
+				</div>
+				""",
+				unsafe_allow_html=True
 			)
 
-			with col1:
-				st.markdown(icon_html, unsafe_allow_html=True)
+		with col3:
+			st.markdown(
+				f"""
+				<div class="sub-price">CHF {row['amount']:.2f}</div>
+				<div class="sub-interval">{interval_text}</div>
+				""",
+				unsafe_allow_html=True
+			)
 
-			with col2:
-				st.markdown(
-					f"""
-					<div class="sub-name">{row['name']}</div>
-					<div class="sub-detail">
-						Nächste Verlängerung:<br>
-						<strong>{next_renewal.strftime('%d.%m.%Y')}</strong>
-					</div>
-					""",
-					unsafe_allow_html=True
-				)
+		with col4:
+			st.markdown(
+				f'<span class="{status_class}">{status_text}</span>',
+				unsafe_allow_html=True
+			)
 
-			with col3:
-				st.markdown(
-					f"""
-					<div class="sub-price">CHF {row['amount']:.2f}</div>
-					<div class="sub-interval">{interval_text}</div>
-					""",
-					unsafe_allow_html=True
-				)
+		with col5:
+			if editable and st.button(
+				'✏️',
+				key=f'edit-{idx}',
+				help='Bearbeiten'
+			):
 
-			with col4:
-				st.markdown(status_html, unsafe_allow_html=True)
+				st.session_state['edit_idx'] = idx
+				_rerun()
 
-			with col5:
-				if editable and st.button(
-					'✏️',
-					key=f'edit-{idx}',
-					help='Bearbeiten'
-				):
-
-					st.session_state['edit_idx'] = idx
-					_rerun()
-
-			st.markdown('</div>', unsafe_allow_html=True)
+		st.markdown('<div class="subscription-separator"></div>', unsafe_allow_html=True)
 
 
 subs = _load()
@@ -872,6 +881,5 @@ else:
 					)
 
 					_rerun()
-
 
 

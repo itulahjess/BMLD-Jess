@@ -134,24 +134,7 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
 	margin-bottom: 18px;
 }
 
-/* ---------- SUBSCRIPTION CARDS ---------- */
-
-.subscription-card {
-	background: rgba(255, 255, 255, 0.82);
-	border: 1px solid rgba(95, 208, 173, 0.18);
-	border-radius: 26px;
-	padding: 20px 22px;
-	margin-bottom: 16px;
-	box-shadow: 0 14px 34px rgba(31, 122, 99, 0.07);
-	backdrop-filter: blur(12px);
-	transition: transform 0.24s ease, box-shadow 0.24s ease, border 0.24s ease;
-}
-
-.subscription-card:hover {
-	transform: translateY(-4px);
-	box-shadow: 0 22px 48px rgba(31, 122, 99, 0.13);
-	border: 1px solid rgba(95, 208, 173, 0.34);
-}
+/* ---------- SUBSCRIPTION ROWS ---------- */
 
 .sub-icon {
 	width: 54px;
@@ -162,7 +145,9 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
 	border-radius: 18px;
 	background: linear-gradient(145deg, rgba(232, 255, 245, 1), rgba(255, 255, 255, 0.75));
 	font-size: 28px;
-	box-shadow: inset 0 0 0 1px rgba(95, 208, 173, 0.16);
+	box-shadow:
+		inset 0 0 0 1px rgba(95, 208, 173, 0.16),
+		0 10px 22px rgba(31, 122, 99, 0.08);
 }
 
 .sub-name {
@@ -213,6 +198,12 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
 	color: #a13a3a;
 	font-weight: 800;
 	font-size: 14px;
+}
+
+.subscription-separator {
+	height: 1px;
+	background: rgba(95, 208, 173, 0.14);
+	margin: 22px 0;
 }
 
 /* ---------- INTERVAL CARDS ---------- */
@@ -295,10 +286,6 @@ hr {
 
 	div[data-testid="stMetric"] [data-testid="stMetricValue"] {
 		font-size: 24px !important;
-	}
-
-	.subscription-card {
-		padding: 18px;
 	}
 }
 </style>
@@ -448,51 +435,56 @@ def render_subscription_cards(df):
 		interval_text = _interval_to_text(row["interval"])
 		start_date_text = _format_start_date(row.get("start_date", None))
 
-		status_html = (
-			'<span class="status-active">✅ Aktiv</span>'
+		status_class = (
+			"status-active"
 			if row["active"]
-			else '<span class="status-inactive">❌ Inaktiv</span>'
+			else "status-inactive"
 		)
 
-		with st.container():
+		status_text = (
+			"✅ Aktiv"
+			if row["active"]
+			else "❌ Inaktiv"
+		)
 
-			st.markdown('<div class="subscription-card">', unsafe_allow_html=True)
+		col1, col2, col3, col4 = st.columns(
+			[0.75, 2.2, 1.35, 1.1]
+		)
 
-			col1, col2, col3, col4 = st.columns(
-				[0.75, 2.2, 1.35, 1.1]
+		with col1:
+			st.markdown(
+				f"<div class='sub-icon'>{icon}</div>",
+				unsafe_allow_html=True
 			)
 
-			with col1:
-				st.markdown(
-					f"<div class='sub-icon'>{icon}</div>",
-					unsafe_allow_html=True
-				)
+		with col2:
+			st.markdown(
+				f"""
+				<div class="sub-name">{row['name']}</div>
+				<div class="sub-detail">
+					Startdatum:<br>
+					<strong>{start_date_text}</strong>
+				</div>
+				""",
+				unsafe_allow_html=True
+			)
 
-			with col2:
-				st.markdown(
-					f"""
-					<div class="sub-name">{row['name']}</div>
-					<div class="sub-detail">
-						Startdatum:<br>
-						<strong>{start_date_text}</strong>
-					</div>
-					""",
-					unsafe_allow_html=True
-				)
+		with col3:
+			st.markdown(
+				f"""
+				<div class="sub-price">CHF {row['amount']:.2f}</div>
+				<div class="sub-interval">{interval_text}</div>
+				""",
+				unsafe_allow_html=True
+			)
 
-			with col3:
-				st.markdown(
-					f"""
-					<div class="sub-price">CHF {row['amount']:.2f}</div>
-					<div class="sub-interval">{interval_text}</div>
-					""",
-					unsafe_allow_html=True
-				)
+		with col4:
+			st.markdown(
+				f'<span class="{status_class}">{status_text}</span>',
+				unsafe_allow_html=True
+			)
 
-			with col4:
-				st.markdown(status_html, unsafe_allow_html=True)
-
-			st.markdown('</div>', unsafe_allow_html=True)
+		st.markdown('<div class="subscription-separator"></div>', unsafe_allow_html=True)
 
 
 render_subscription_cards(df)
