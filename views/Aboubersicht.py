@@ -17,9 +17,16 @@ if df is None or df.empty:
 	st.stop()
 
 if 'start_date' in df.columns:
-	df['start_date'] = pd.to_datetime(df['start_date'], errors='coerce').dt.date
+	df['start_date'] = pd.to_datetime(
+		df['start_date'],
+		errors='coerce'
+	).dt.date
 
-df['amount'] = pd.to_numeric(df['amount'], errors='coerce').fillna(0.0)
+df['amount'] = pd.to_numeric(
+	df['amount'],
+	errors='coerce'
+).fillna(0.0)
+
 df['active'] = df.get('active', True)
 
 col1, col2, col3, col4 = st.columns(4)
@@ -27,18 +34,49 @@ col1, col2, col3, col4 = st.columns(4)
 active_df = df[df['active'] == True]
 
 active_count = len(active_df)
-inactive_count = len(df[df['active'] == False])
 
-monthly_cost = active_df[active_df['interval'] == 'Monthly']['amount'].sum()
-yearly_cost = active_df[active_df['interval'] == 'Yearly']['amount'].sum()
-quarterly_cost = active_df[active_df['interval'] == 'Quarterly']['amount'].sum()
+inactive_count = len(
+	df[df['active'] == False]
+)
 
-total_monthly_cost = monthly_cost + (yearly_cost / 12) + (quarterly_cost / 3)
+# Einzelne Kosten getrennt berechnen
+monthly_cost = active_df[
+	active_df['interval'] == 'Monthly'
+]['amount'].sum()
 
-col1.metric("Aktive Abos", active_count)
-col2.metric("Inaktive Abos", inactive_count)
-col3.metric("Monatliche Kosten", f"CHF {total_monthly_cost:.2f}")
-col4.metric("Gesamtanzahl", len(df))
+yearly_cost = active_df[
+	active_df['interval'] == 'Yearly'
+]['amount'].sum()
+
+quarterly_cost = active_df[
+	active_df['interval'] == 'Quarterly'
+]['amount'].sum()
+
+# NUR echte monatliche Kosten
+total_monthly_cost = monthly_cost
+
+# NUR echte jährliche Kosten
+total_yearly_cost = yearly_cost
+
+col1.metric(
+	"Aktive Abos",
+	active_count
+)
+
+col2.metric(
+	"Inaktive Abos",
+	inactive_count
+)
+
+col3.metric(
+	"Monatliche Kosten",
+	f"CHF {total_monthly_cost:.2f}"
+)
+
+col4.metric(
+	"Jährliche Kosten",
+	f"CHF {total_yearly_cost:.2f}"
+)
 
 st.divider()
 
@@ -54,13 +92,21 @@ def render_subscription_cards(df):
 
 		with st.container():
 
-			col1, col2, col3, col4 = st.columns([0.6, 2, 1.5, 1])
+			col1, col2, col3, col4 = st.columns(
+				[0.6, 2, 1.5, 1]
+			)
 
 			icon = row.get("icon", "📱")
+
 			col1.write(icon)
 
-			col2.write(f"**{row['name']}**")
-			col2.caption(f"Startdatum: {row['start_date']}")
+			col2.write(
+				f"**{row['name']}**"
+			)
+
+			col2.caption(
+				f"Startdatum: {row['start_date']}"
+			)
 
 			interval_text = (
 				"Monatlich"
@@ -70,10 +116,18 @@ def render_subscription_cards(df):
 				else "Quartalsweise"
 			)
 
-			col3.write(f"CHF {row['amount']:.2f}")
+			col3.write(
+				f"CHF {row['amount']:.2f}"
+			)
+
 			col3.caption(interval_text)
 
-			status = "✅ Aktiv" if row["active"] else "❌ Inaktiv"
+			status = (
+				"✅ Aktiv"
+				if row["active"]
+				else "❌ Inaktiv"
+			)
+
 			col4.write(status)
 
 render_subscription_cards(df)
@@ -89,16 +143,43 @@ yearly = df[df['interval'] == 'Yearly']
 quarterly = df[df['interval'] == 'Quarterly']
 
 with col1:
+
 	st.write("**Monatliche Abos**")
-	st.metric("Anzahl", len(monthly))
-	st.metric("Kosten/Monat", f"CHF {monthly['amount'].sum():.2f}")
+
+	st.metric(
+		"Anzahl",
+		len(monthly)
+	)
+
+	st.metric(
+		"Kosten/Monat",
+		f"CHF {monthly['amount'].sum():.2f}"
+	)
 
 with col2:
+
 	st.write("**Jährliche Abos**")
-	st.metric("Anzahl", len(yearly))
-	st.metric("Kosten/Jahr", f"CHF {yearly['amount'].sum():.2f}")
+
+	st.metric(
+		"Anzahl",
+		len(yearly)
+	)
+
+	st.metric(
+		"Kosten/Jahr",
+		f"CHF {yearly['amount'].sum():.2f}"
+	)
 
 with col3:
+
 	st.write("**Quartalsweise Abos**")
-	st.metric("Anzahl", len(quarterly))
-	st.metric("Kosten/Quartal", f"CHF {quarterly['amount'].sum():.2f}")
+
+	st.metric(
+		"Anzahl",
+		len(quarterly)
+	)
+
+	st.metric(
+		"Kosten/Quartal",
+		f"CHF {quarterly['amount'].sum():.2f}"
+	)
