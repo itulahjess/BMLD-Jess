@@ -144,10 +144,6 @@ for _, row in active_subs.iterrows():
 
 name = st.session_state.get("name", "User")
 
-st.markdown("""
-<div class="subtitle">Deine Abos, Kosten und Budgets immer im Blick</div>
-""", unsafe_allow_html=True)
-
 st.markdown(f"""
 <div class="hero-box">
 	<div class="hero-title">Hallo {name} 👋</div>
