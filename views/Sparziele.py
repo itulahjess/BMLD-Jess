@@ -209,23 +209,10 @@ div[data-testid="stExpander"] details {
 	color: #054033 !important;
 }
 
-/* ---------- GOAL CARDS ---------- */
+/* ---------- GOAL ROWS ---------- */
 
-.goal-card {
-	background: rgba(255, 255, 255, 0.82);
-	border: 1px solid rgba(95, 208, 173, 0.18);
-	border-radius: 26px;
-	padding: 24px 26px;
-	margin-bottom: 18px;
-	box-shadow: 0 14px 34px rgba(31, 122, 99, 0.07);
-	backdrop-filter: blur(12px);
-	transition: transform 0.24s ease, box-shadow 0.24s ease, border 0.24s ease;
-}
-
-.goal-card:hover {
-	transform: translateY(-4px);
-	box-shadow: 0 22px 48px rgba(31, 122, 99, 0.13);
-	border: 1px solid rgba(95, 208, 173, 0.34);
+.goal-row-spacer {
+	height: 18px;
 }
 
 .goal-title {
@@ -380,10 +367,6 @@ hr {
 
 	div[data-testid="stMetric"] [data-testid="stMetricValue"] {
 		font-size: 23px !important;
-	}
-
-	.goal-card {
-		padding: 20px;
 	}
 }
 </style>
@@ -617,8 +600,6 @@ if not goals_data.empty:
 
 		with st.container():
 
-			st.markdown('<div class="goal-card">', unsafe_allow_html=True)
-
 			col1, col2, col3 = st.columns([2.2, 1.2, 0.8])
 
 			with col1:
@@ -728,7 +709,7 @@ if not goals_data.empty:
 						del st.session_state[f"edit_goal_{idx}"]
 						_rerun()
 
-			st.markdown('</div>', unsafe_allow_html=True)
+			st.markdown('<div class="goal-row-spacer"></div>', unsafe_allow_html=True)
 
 else:
 	st.markdown("""

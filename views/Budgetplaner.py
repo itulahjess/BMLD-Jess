@@ -209,23 +209,10 @@ div[data-testid="stExpander"] details {
 	color: #054033 !important;
 }
 
-/* ---------- BUDGET CARDS ---------- */
+/* ---------- BUDGET ROWS ---------- */
 
-.budget-card {
-	background: rgba(255, 255, 255, 0.82);
-	border: 1px solid rgba(95, 208, 173, 0.18);
-	border-radius: 26px;
-	padding: 22px 24px;
-	margin-bottom: 16px;
-	box-shadow: 0 14px 34px rgba(31, 122, 99, 0.07);
-	backdrop-filter: blur(12px);
-	transition: transform 0.24s ease, box-shadow 0.24s ease, border 0.24s ease;
-}
-
-.budget-card:hover {
-	transform: translateY(-4px);
-	box-shadow: 0 22px 48px rgba(31, 122, 99, 0.13);
-	border: 1px solid rgba(95, 208, 173, 0.34);
+.budget-row-spacer {
+	height: 16px;
 }
 
 .budget-category {
@@ -379,10 +366,6 @@ hr {
 
 	div[data-testid="stMetric"] [data-testid="stMetricValue"] {
 		font-size: 23px !important;
-	}
-
-	.budget-card {
-		padding: 18px;
 	}
 }
 </style>
@@ -683,8 +666,6 @@ if not budget_data.empty:
 
 		with st.container():
 
-			st.markdown('<div class="budget-card">', unsafe_allow_html=True)
-
 			col1, col2, col3, col4, col5 = st.columns(
 				[2.1, 1.4, 1.4, 0.8, 1]
 			)
@@ -761,7 +742,7 @@ if not budget_data.empty:
 
 					_rerun()
 
-			st.markdown('</div>', unsafe_allow_html=True)
+			st.markdown('<div class="budget-row-spacer"></div>', unsafe_allow_html=True)
 
 else:
 	st.markdown("""
