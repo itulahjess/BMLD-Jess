@@ -4,6 +4,8 @@ from datetime import date, timedelta
 from utils.data_manager import DataManager
 
 
+
+
 st.markdown("""
 <style>
 /* ---------- GLOBAL PAGE STYLE ---------- */
@@ -25,8 +27,8 @@ st.markdown("""
 /* ---------- TYPOGRAPHY ---------- */
 
 h1 {
-	font-size: 58px !important;
-	font-weight: 900 !important;
+	font-size: 52px !important;
+	font-weight: 800 !important;
 	letter-spacing: -1.8px !important;
 	color: #2f3038 !important;
 	margin-bottom: 1.2rem !important;
@@ -345,23 +347,22 @@ except AttributeError:
 
 
 ICON_OPTIONS = {
-	'📷': 'Kamera',
-	'📱': 'Smartphone',
-	'🎵': 'Musik',
-	'📺': 'TV',
-	'🎮': 'Spiele',
-	'📚': 'Bücher',
-	'💼': 'Geschäft',
-	'🏠': 'Zuhause',
-	'🍎': 'Apple',
-	'🎥': 'Video',
-	'🌐': 'Web',
-	'📧': 'E-Mail',
-	'📰': 'Nachrichten',
-	'🎬': 'Unterhaltung',
-	'💳': 'Finanzen'
+	"📷": "Kamera",
+	"📱": "Smartphone",
+	"🎵": "Musik",
+	"📺": "TV",
+	"🎮": "Spiele",
+	"📚": "Bücher",
+	"💼": "Geschäft",
+	"🏠": "Zuhause",
+	"🍎": "Apple",
+	"🎥": "Video",
+	"🌐": "Web",
+	"📧": "E-Mail",
+	"📰": "Nachrichten",
+	"🎬": "Unterhaltung",
+	"💳": "Finanzen"
 }
-
 
 def _load():
 
@@ -881,5 +882,4 @@ else:
 					)
 
 					_rerun()
-
 

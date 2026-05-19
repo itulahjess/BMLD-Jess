@@ -17,15 +17,66 @@ st.set_page_config(
 st.markdown("""
 <style>
 
+/* Fonts importieren */
 @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&display=swap');
 
-/* Nur Texte */
-h1, h2, h3, h4, h5, h6,
-p,
-label,
-button,
-input,
-textarea {
+/* Hauptschrift */
+html, body {
+    font-family: 'Playfair Display', serif;
+}
+
+.stApp {
+    font-family: 'Playfair Display', serif !important;
+}
+
+/* Alle Streamlit Container */
+div, p, label {
+    font-family: 'Playfair Display', serif;
+}
+
+/* Titel */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif !important;
+}
+
+/* Text */
+p, label {
+    font-family: 'Playfair Display', serif !important;
+}
+
+/* Inputs & Buttons */
+button, input, textarea {
+    font-family: 'Playfair Display', serif !important;
+}
+
+/* Streamlit Textcontainer */
+.stMarkdown p,
+.stText p,
+.stText,
+.stMarkdown {
+    font-family: 'Playfair Display', serif !important;
+}
+
+/* Sidebar NUR TEXT */
+section[data-testid="stSidebar"] p,
+section[data-testid="stSidebar"] label {
+    font-family: 'Playfair Display', serif !important;
+}
+
+/* Navigation Labels */
+section[data-testid="stSidebarNav"] a {
+    font-family: 'Playfair Display', serif !important;
+}
+            
+/* Sidebar Navigation Text */
+[data-testid="stSidebarNav"] a,
+[data-testid="stSidebarNav"] {
+    font-family: 'Playfair Display', serif !important;
+}
+
+/* Allgemeiner Streamlit Text */
+[data-testid="stMarkdownContainer"] p,
+[data-testid="stText"] {
     font-family: 'Playfair Display', serif !important;
 }
 
@@ -102,7 +153,7 @@ h2 {
     font-size: 32px;
 }
             
-p, div, label {
+p, label {
     font-size: 20px;
 }
             
@@ -112,8 +163,8 @@ p, div, label {
 }
             
 [data-testid="stMetricValue"] {
-    font-size: 18px !important;
-    font-weight: 300 !important;
+    font-size: 36px !important;
+    font-weight: 700 !important;
 }
 
 /* METRIC BOX */
@@ -127,7 +178,7 @@ div[data-testid="stMetric"] {
 </style>
 """, unsafe_allow_html=True)
 
-def show_logo_header(logo_path="views/assets/Bild.png", logo_width=140, title="Meine Aboverwaltung", title_font_family="Playfair Display", title_font_size=40):
+def show_logo_header(logo_path="views/assets/Bild.png", logo_width=500, title="Meine Aboverwaltung", title_font_family="Playfair Display", title_font_size=52):
     # logo_path: relativer Pfad aus Repo-Root oder __file__-bezogen anpassen
     p = Path(logo_path)
     if not p.exists():
@@ -143,7 +194,7 @@ def show_logo_header(logo_path="views/assets/Bild.png", logo_width=140, title="M
         st.markdown(
             f"<div style='display:flex;align-items:center;height:100%'>"
             f"<h1 style='font-family: \"{title_font_family}\", Arial, sans-serif; "
-            f"font-size: {title_font_size}px; margin:8px 0 0 10px; font-weight:600;'>"
+            f"font-size: {title_font_size}px; margin:8px 0 0 10px; font-weight:800;'>"
             f"{title}</h1></div>",
             unsafe_allow_html=True,
         )

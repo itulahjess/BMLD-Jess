@@ -8,4 +8,4 @@ Jessica Itulah (itulajes@students.zhaw.ch)
 
 ## App-Beschrieb
 App-Name: Kaitas
-Kaitas wurde entwickelt, um eine übersichtliche Verwaltung aller Abbonmente zu ermöglichen.
+Kaitas wurde entwickelt, um eine übersichtliche Verwaltung aller Abbonmente zu ermöglichen und das Geldmanagement zu unterstützen.

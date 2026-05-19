@@ -32,14 +32,14 @@ st.markdown("""
 }
 
 .logo {
-	width: 360px;
+	width: 500px;
 	border-radius: 18px;
 	filter: drop-shadow(0 12px 25px rgba(0, 0, 0, 0.06));
 }
 
 .app-title {
-	font-size: 52px;
-	font-weight: 900;
+	font-size: 58px;
+	font-weight: 800;
 	color: #2f3038;
 	margin-bottom: 5px;
 	letter-spacing: -1.5px;
@@ -48,7 +48,7 @@ st.markdown("""
 
 .subtitle {
 	text-align: center;
-	font-size: 18px;
+	font-size: 58px;
 	color: #52796f;
 	margin-bottom: 35px;
 }
