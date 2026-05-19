@@ -6,8 +6,6 @@ from utils.data_manager import DataManager
 
 st.markdown("""
 <style>
-/* ---------- GLOBAL PAGE STYLE ---------- */
-
 .stApp {
 	background:
 		radial-gradient(circle at top right, rgba(116, 222, 188, 0.22), transparent 34%),
@@ -22,8 +20,6 @@ st.markdown("""
 	max-width: 1100px;
 }
 
-/* ---------- TYPOGRAPHY ---------- */
-
 h1 {
 	font-size: 58px !important;
 	font-weight: 900 !important;
@@ -31,17 +27,6 @@ h1 {
 	color: #2f3038 !important;
 	margin-bottom: 1.2rem !important;
 }
-
-h2, h3 {
-	color: #2f3038 !important;
-	letter-spacing: -0.7px !important;
-}
-
-p, label, span {
-	color: #2f3038;
-}
-
-/* ---------- PAGE INTRO ---------- */
 
 .page-intro {
 	position: relative;
@@ -84,53 +69,32 @@ p, label, span {
 	line-height: 1.5;
 }
 
-/* ---------- METRIC CARDS ---------- */
-
 div[data-testid="stMetric"] {
 	background:
 		linear-gradient(145deg, rgba(232, 255, 245, 0.95), rgba(255, 255, 255, 0.72));
-	padding: 24px 24px;
+	padding: 24px;
 	border-radius: 24px;
 	box-shadow: 0 14px 35px rgba(31, 122, 99, 0.08);
 	border: 1px solid rgba(95, 208, 173, 0.17);
-	backdrop-filter: blur(12px);
-	transition: transform 0.22s ease, box-shadow 0.22s ease, border 0.22s ease;
 	min-height: 125px;
-}
-
-div[data-testid="stMetric"]:hover {
-	transform: translateY(-4px);
-	box-shadow: 0 20px 45px rgba(31, 122, 99, 0.14);
-	border: 1px solid rgba(95, 208, 173, 0.32);
 }
 
 div[data-testid="stMetric"] label {
 	font-size: 15px !important;
 	font-weight: 800 !important;
 	color: #054033 !important;
-	line-height: 1.25 !important;
-	white-space: normal !important;
 }
 
 div[data-testid="stMetric"] [data-testid="stMetricValue"] {
 	font-size: 27px !important;
 	font-weight: 900 !important;
 	color: #1b5e54 !important;
-	letter-spacing: -0.5px;
-	white-space: normal !important;
 }
-
-div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
-	display: none;
-}
-
-/* ---------- SECTION TITLES ---------- */
 
 .section-title {
 	font-size: 32px;
 	font-weight: 900;
 	color: #2f3038;
-	letter-spacing: -0.9px;
 	margin-top: 10px;
 	margin-bottom: 18px;
 }
@@ -142,40 +106,6 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
 	margin-bottom: 18px;
 }
 
-/* ---------- EXPANDER ---------- */
-
-.streamlit-expanderHeader {
-	background: rgba(255, 255, 255, 0.72);
-	border-radius: 18px;
-	border: 1px solid rgba(95, 208, 173, 0.18);
-	font-weight: 800;
-	color: #054033;
-}
-
-div[data-testid="stExpander"] {
-	border: none;
-	background: transparent;
-}
-
-div[data-testid="stExpander"] details {
-	background: rgba(255, 255, 255, 0.5);
-	border-radius: 22px;
-	border: 1px solid rgba(95, 208, 173, 0.18);
-	box-shadow: 0 14px 34px rgba(31, 122, 99, 0.06);
-}
-
-/* ---------- INPUTS ---------- */
-
-.stTextInput input,
-.stNumberInput input {
-	background: rgba(255, 255, 255, 0.85) !important;
-	border: 1px solid rgba(95, 208, 173, 0.22) !important;
-	border-radius: 14px !important;
-	color: #2f3038 !important;
-}
-
-/* ---------- STREAMLIT BUTTONS ---------- */
-
 .stButton > button {
 	border-radius: 16px !important;
 	border: 1px solid rgba(95, 208, 173, 0.26) !important;
@@ -183,18 +113,7 @@ div[data-testid="stExpander"] details {
 	color: #054033 !important;
 	font-weight: 800 !important;
 	box-shadow: 0 8px 20px rgba(31, 122, 99, 0.08) !important;
-	transition: all 0.2s ease !important;
 }
-
-.stButton > button:hover {
-	transform: translateY(-2px);
-	border: 1px solid rgba(95, 208, 173, 0.48) !important;
-	box-shadow: 0 14px 28px rgba(31, 122, 99, 0.13) !important;
-	background: #e8fff5 !important;
-	color: #054033 !important;
-}
-
-/* ---------- BUDGET ROWS ---------- */
 
 .budget-category {
 	font-size: 21px;
@@ -228,8 +147,6 @@ div[data-testid="stExpander"] details {
 	font-size: 14px;
 }
 
-/* ---------- PROGRESS BAR ---------- */
-
 .progress-track {
 	width: 100%;
 	height: 10px;
@@ -245,12 +162,27 @@ div[data-testid="stExpander"] details {
 	background: linear-gradient(90deg, #5fd0ad, #1f7a63);
 }
 
-/* ---------- SPACING ---------- */
-
 .budget-separator {
 	height: 1px;
 	background: rgba(95, 208, 173, 0.14);
 	margin: 22px 0;
+}
+
+.empty-state {
+	background: rgba(255, 255, 255, 0.72);
+	border: 1px dashed rgba(95, 208, 173, 0.42);
+	border-radius: 24px;
+	padding: 30px;
+	text-align: center;
+	color: #52796f;
+	margin-top: 12px;
+}
+
+.empty-title {
+	font-size: 21px;
+	font-weight: 900;
+	color: #054033;
+	margin-bottom: 6px;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -307,8 +239,30 @@ budget_data['spent_amount'] = pd.to_numeric(
 ).fillna(0.0)
 
 
+subs = dm.load_user_data(
+	'subscriptions.csv',
+	initial_value=pd.DataFrame()
+)
+
+if subs is not None and not subs.empty:
+
+	subs['amount'] = pd.to_numeric(
+		subs['amount'],
+		errors='coerce'
+	).fillna(0.0)
+
+	subs['active'] = subs.get('active', True)
+
+	monthly_sub_cost = subs[
+		subs['active'] == True
+	]['amount'].sum()
+
+else:
+	monthly_sub_cost = 0
+
+
 total_budget = budget_data['planned_amount'].sum()
-total_spent = budget_data['spent_amount'].sum()
+total_spent = budget_data['spent_amount'].sum() + monthly_sub_cost
 remaining = total_budget - total_spent
 
 
@@ -403,7 +357,7 @@ if not budget_data.empty:
 	for idx, row in budget_data.iterrows():
 
 		planned = float(row['planned_amount'])
-		spent = float(row.get('spent_amount', 0))
+		spent = float(row.get('spent_amount', 0)) + float(monthly_sub_cost)
 
 		if planned > 0:
 			percentage = (spent / planned) * 100
