@@ -106,6 +106,17 @@ render_subscription_cards(df)
 
 st.divider()
 
+st.markdown('<div class="section-title">Gesamtsumme aller Abos</div>', unsafe_allow_html=True)
+st.markdown(
+	f"""
+	<div class="interval-card">
+		<div class="interval-label">Gesamtkosten</div>
+		<div class="interval-value">CHF {df['amount'].sum():.2f}</div>
+	</div>
+	""",
+	unsafe_allow_html=True
+)
+
 st.markdown('<div class="section-title">Zusammenfassung nach Intervall</div>', unsafe_allow_html=True)
 
 
