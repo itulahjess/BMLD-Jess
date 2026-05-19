@@ -5,8 +5,6 @@ from utils.data_manager import DataManager
 
 st.markdown("""
 <style>
-/* ---------- GLOBAL PAGE STYLE ---------- */
-
 .stApp {
 	background:
 		radial-gradient(circle at top right, rgba(116, 222, 188, 0.22), transparent 34%),
@@ -21,8 +19,6 @@ st.markdown("""
 	max-width: 1100px;
 }
 
-/* ---------- TYPOGRAPHY ---------- */
-
 h1 {
 	font-size: 58px !important;
 	font-weight: 900 !important;
@@ -35,12 +31,6 @@ h2, h3 {
 	color: #2f3038 !important;
 	letter-spacing: -0.7px !important;
 }
-
-p, label, span {
-	color: #2f3038;
-}
-
-/* ---------- PAGE INTRO ---------- */
 
 .page-intro {
 	position: relative;
@@ -83,48 +73,6 @@ p, label, span {
 	line-height: 1.5;
 }
 
-/* ---------- METRIC CARDS ---------- */
-
-div[data-testid="stMetric"] {
-	background:
-		linear-gradient(145deg, rgba(232, 255, 245, 0.95), rgba(255, 255, 255, 0.72));
-	padding: 24px 24px;
-	border-radius: 24px;
-	box-shadow: 0 14px 35px rgba(31, 122, 99, 0.08);
-	border: 1px solid rgba(95, 208, 173, 0.17);
-	backdrop-filter: blur(12px);
-	transition: transform 0.22s ease, box-shadow 0.22s ease, border 0.22s ease;
-	min-height: 125px;
-}
-
-div[data-testid="stMetric"]:hover {
-	transform: translateY(-4px);
-	box-shadow: 0 20px 45px rgba(31, 122, 99, 0.14);
-	border: 1px solid rgba(95, 208, 173, 0.32);
-}
-
-div[data-testid="stMetric"] label {
-	font-size: 15px !important;
-	font-weight: 800 !important;
-	color: #054033 !important;
-	line-height: 1.25 !important;
-	white-space: normal !important;
-}
-
-div[data-testid="stMetric"] [data-testid="stMetricValue"] {
-	font-size: 30px !important;
-	font-weight: 900 !important;
-	color: #1b5e54 !important;
-	letter-spacing: -0.5px;
-	white-space: normal !important;
-}
-
-div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
-	display: none;
-}
-
-/* ---------- SECTION TITLES ---------- */
-
 .section-title {
 	font-size: 32px;
 	font-weight: 900;
@@ -133,8 +81,6 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
 	margin-top: 10px;
 	margin-bottom: 18px;
 }
-
-/* ---------- SUBSCRIPTION ROWS ---------- */
 
 .sub-icon {
 	width: 54px;
@@ -206,8 +152,6 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
 	margin: 22px 0;
 }
 
-/* ---------- INTERVAL CARDS ---------- */
-
 .interval-heading {
 	font-size: 18px;
 	font-weight: 900;
@@ -246,8 +190,6 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
 	letter-spacing: -0.5px;
 }
 
-/* ---------- EMPTY STATE ---------- */
-
 .empty-state {
 	background: rgba(255, 255, 255, 0.72);
 	border: 1px dashed rgba(95, 208, 173, 0.42);
@@ -265,15 +207,11 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
 	margin-bottom: 6px;
 }
 
-/* ---------- DIVIDER ---------- */
-
 hr {
 	border-color: rgba(95, 208, 173, 0.18) !important;
 	margin-top: 2rem !important;
 	margin-bottom: 2rem !important;
 }
-
-/* ---------- RESPONSIVE ---------- */
 
 @media (max-width: 800px) {
 	h1 {
@@ -282,10 +220,6 @@ hr {
 
 	.page-intro {
 		padding: 24px;
-	}
-
-	div[data-testid="stMetric"] [data-testid="stMetricValue"] {
-		font-size: 24px !important;
 	}
 }
 </style>
@@ -298,7 +232,7 @@ st.markdown("""
 <div class="page-intro">
 	<div class="page-intro-title">Deine Abos auf einen Blick</div>
 	<div class="page-intro-text">
-		Hier siehst du, welche Abos aktiv sind, wie hoch deine Kosten sind und wie sich deine Abonnements nach Intervall verteilen.
+		Hier siehst du deine Abonnements und darunter eine klare Zusammenfassung nach Intervall.
 	</div>
 </div>
 """, unsafe_allow_html=True)
@@ -338,59 +272,6 @@ df['active'] = df.get('active', True)
 
 if 'icon' not in df.columns:
 	df['icon'] = '📱'
-
-
-active_df = df[df['active'] == True]
-
-active_count = len(active_df)
-
-inactive_count = len(
-	df[df['active'] == False]
-)
-
-monthly_cost = active_df[
-	active_df['interval'] == 'Monthly'
-]['amount'].sum()
-
-yearly_cost = active_df[
-	active_df['interval'] == 'Yearly'
-]['amount'].sum()
-
-quarterly_cost = active_df[
-	active_df['interval'] == 'Quarterly'
-]['amount'].sum()
-
-total_monthly_cost = monthly_cost
-
-total_yearly_cost = yearly_cost
-
-
-col1, col2, col3, col4 = st.columns(4)
-
-col1.metric(
-	"Aktive Abos",
-	active_count
-)
-
-col2.metric(
-	"Inaktive Abos",
-	inactive_count
-)
-
-col3.metric(
-	"Monatlich",
-	f"CHF {total_monthly_cost:.2f}"
-)
-
-col4.metric(
-	"Jährlich",
-	f"CHF {total_yearly_cost:.2f}"
-)
-
-
-st.divider()
-
-st.markdown('<div class="section-title">Alle Abonnements</div>', unsafe_allow_html=True)
 
 
 def _interval_to_text(interval):
@@ -487,6 +368,8 @@ def render_subscription_cards(df):
 		st.markdown('<div class="subscription-separator"></div>', unsafe_allow_html=True)
 
 
+st.markdown('<div class="section-title">Alle Abonnements</div>', unsafe_allow_html=True)
+
 render_subscription_cards(df)
 
 
@@ -502,9 +385,7 @@ quarterly = df[df['interval'] == 'Quarterly']
 col1, col2, col3 = st.columns(3)
 
 with col1:
-
 	st.markdown('<div class="interval-heading">Monatliche Abos</div>', unsafe_allow_html=True)
-
 	st.markdown(
 		f"""
 		<div class="interval-card">
@@ -520,9 +401,7 @@ with col1:
 	)
 
 with col2:
-
 	st.markdown('<div class="interval-heading">Jährliche Abos</div>', unsafe_allow_html=True)
-
 	st.markdown(
 		f"""
 		<div class="interval-card">
@@ -538,9 +417,7 @@ with col2:
 	)
 
 with col3:
-
 	st.markdown('<div class="interval-heading">Quartalsweise Abos</div>', unsafe_allow_html=True)
-
 	st.markdown(
 		f"""
 		<div class="interval-card">

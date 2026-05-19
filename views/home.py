@@ -14,7 +14,6 @@ st.markdown("""
 	color: #2f3038;
 }
 
-/* Makes the page feel more spacious */
 .block-container {
 	padding-top: 2.2rem;
 	padding-bottom: 3rem;
@@ -76,7 +75,6 @@ st.markdown("""
 	box-shadow: 0 24px 55px rgba(31, 122, 99, 0.13);
 }
 
-/* Decorative blurred circle */
 .hero-box::before {
 	content: "";
 	position: absolute;
@@ -129,6 +127,7 @@ div[data-testid="stMetric"] {
 	border: 1px solid rgba(95, 208, 173, 0.17);
 	backdrop-filter: blur(12px);
 	transition: transform 0.22s ease, box-shadow 0.22s ease, border 0.22s ease;
+	min-height: 120px;
 }
 
 div[data-testid="stMetric"]:hover {
@@ -138,19 +137,21 @@ div[data-testid="stMetric"]:hover {
 }
 
 div[data-testid="stMetric"] label {
-	font-size: 17px !important;
+	font-size: 16px !important;
 	font-weight: 800 !important;
 	color: #054033 !important;
+	white-space: normal !important;
+	line-height: 1.25 !important;
 }
 
 div[data-testid="stMetric"] [data-testid="stMetricValue"] {
-	font-size: 32px !important;
+	font-size: 30px !important;
 	font-weight: 900 !important;
 	color: #1b5e54 !important;
 	letter-spacing: -0.5px;
+	white-space: normal !important;
 }
 
-/* Removes unnecessary metric spacing */
 div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
 	display: none;
 }
@@ -162,11 +163,11 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
 	overflow: hidden;
 	background: rgba(255, 255, 255, 0.82);
 	border: 1px solid rgba(95, 208, 173, 0.18);
-	padding: 28px 24px;
+	padding: 28px 20px;
 	border-radius: 26px;
 	text-align: center;
 	box-shadow: 0 14px 34px rgba(31, 122, 99, 0.07);
-	height: 165px;
+	height: 190px;
 	backdrop-filter: blur(12px);
 	transition: transform 0.25s ease, box-shadow 0.25s ease, border 0.25s ease;
 }
@@ -177,7 +178,6 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
 	border: 1px solid rgba(95, 208, 173, 0.34);
 }
 
-/* subtle shine effect */
 .info-card::before {
 	content: "";
 	position: absolute;
@@ -206,14 +206,15 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
 }
 
 .info-title {
-	font-size: 20px;
+	font-size: 19px;
 	font-weight: 900;
 	color: #054033;
 	letter-spacing: -0.2px;
+	line-height: 1.2;
 }
 
 .info-text {
-	font-size: 14px;
+	font-size: 13px;
 	color: #52796f;
 	margin-top: 8px;
 	line-height: 1.45;
@@ -231,6 +232,17 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
 }
 
 /* ---------- RESPONSIVE ---------- */
+
+@media (max-width: 1000px) {
+	.info-card {
+		height: 175px;
+		margin-bottom: 14px;
+	}
+
+	.info-title {
+		font-size: 18px;
+	}
+}
 
 @media (max-width: 900px) {
 	.hero-title {
@@ -273,21 +285,16 @@ subs['active'] = subs.get('active', True)
 
 active_subs = subs[subs['active'] == True]
 
-monthly_cost = 0
-yearly_cost = 0
 
-for _, row in active_subs.iterrows():
+# Nur echte monatliche Abos
+monthly_cost = active_subs[
+	active_subs['interval'] == 'Monthly'
+]['amount'].sum()
 
-	if row['interval'] == 'Monthly':
-		monthly_cost += float(row['amount'])
-		yearly_cost += float(row['amount']) * 12
-
-	elif row['interval'] == 'Yearly':
-		yearly_cost += float(row['amount'])
-
-	elif row['interval'] == 'Quarterly':
-		monthly_cost += float(row['amount']) / 3
-		yearly_cost += float(row['amount']) * 4
+# Nur echte jährliche Abos
+yearly_cost = active_subs[
+	active_subs['interval'] == 'Yearly'
+]['amount'].sum()
 
 
 name = st.session_state.get("name", "User")
@@ -317,7 +324,7 @@ with col3:
 st.markdown("<br>", unsafe_allow_html=True)
 
 
-c1, c2, c3 = st.columns(3)
+c1, c2, c3, c4 = st.columns(4)
 
 with c1:
 	st.markdown("""
@@ -343,6 +350,15 @@ with c3:
 		<div class="info-icon">💰</div>
 		<div class="info-title">Budgetplaner</div>
 		<div class="info-text">Plane dein Budget und behalte deine Ausgaben im Griff.</div>
+	</div>
+	""", unsafe_allow_html=True)
+
+with c4:
+	st.markdown("""
+	<div class="info-card">
+		<div class="info-icon">🎯</div>
+		<div class="info-title">Sparziele</div>
+		<div class="info-text">Erstelle Sparziele und verfolge deinen Fortschritt.</div>
 	</div>
 	""", unsafe_allow_html=True)
 

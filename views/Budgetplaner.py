@@ -167,26 +167,11 @@ div[data-testid="stExpander"] details {
 /* ---------- INPUTS ---------- */
 
 .stTextInput input,
-.stNumberInput input,
-.stDateInput input,
-.stSelectbox div[data-baseweb="select"],
-.stCheckbox {
-	border-radius: 14px !important;
-}
-
-.stTextInput input,
-.stNumberInput input,
-.stDateInput input {
+.stNumberInput input {
 	background: rgba(255, 255, 255, 0.85) !important;
 	border: 1px solid rgba(95, 208, 173, 0.22) !important;
+	border-radius: 14px !important;
 	color: #2f3038 !important;
-}
-
-.stTextInput input:focus,
-.stNumberInput input:focus,
-.stDateInput input:focus {
-	border-color: #5fd0ad !important;
-	box-shadow: 0 0 0 3px rgba(95, 208, 173, 0.16) !important;
 }
 
 /* ---------- STREAMLIT BUTTONS ---------- */
@@ -211,16 +196,11 @@ div[data-testid="stExpander"] details {
 
 /* ---------- BUDGET ROWS ---------- */
 
-.budget-row-spacer {
-	height: 16px;
-}
-
 .budget-category {
 	font-size: 21px;
 	font-weight: 900;
 	color: #054033;
-	letter-spacing: -0.3px;
-	margin-bottom: 6px;
+	margin-bottom: 8px;
 }
 
 .budget-label {
@@ -234,7 +214,6 @@ div[data-testid="stExpander"] details {
 	font-size: 18px;
 	font-weight: 900;
 	color: #2f3038;
-	letter-spacing: -0.2px;
 }
 
 .budget-percent {
@@ -245,30 +224,6 @@ div[data-testid="stExpander"] details {
 	border-radius: 999px;
 	background: rgba(95, 208, 173, 0.16);
 	color: #1f7a63;
-	font-weight: 900;
-	font-size: 14px;
-}
-
-.budget-percent-warning {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	padding: 8px 13px;
-	border-radius: 999px;
-	background: rgba(255, 193, 7, 0.18);
-	color: #8a6500;
-	font-weight: 900;
-	font-size: 14px;
-}
-
-.budget-percent-danger {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	padding: 8px 13px;
-	border-radius: 999px;
-	background: rgba(255, 120, 120, 0.14);
-	color: #a13a3a;
 	font-weight: 900;
 	font-size: 14px;
 }
@@ -290,83 +245,12 @@ div[data-testid="stExpander"] details {
 	background: linear-gradient(90deg, #5fd0ad, #1f7a63);
 }
 
-.progress-fill-warning {
-	height: 100%;
-	border-radius: 999px;
-	background: linear-gradient(90deg, #ffc857, #d99200);
-}
+/* ---------- SPACING ---------- */
 
-.progress-fill-danger {
-	height: 100%;
-	border-radius: 999px;
-	background: linear-gradient(90deg, #ff8a8a, #c94c4c);
-}
-
-/* ---------- EDIT BOX ---------- */
-
-.edit-box {
-	background:
-		linear-gradient(135deg, rgba(232, 255, 245, 0.95), rgba(255, 255, 255, 0.78));
-	border: 1px solid rgba(95, 208, 173, 0.2);
-	border-radius: 28px;
-	padding: 24px 28px;
-	margin-bottom: 24px;
-	box-shadow: 0 18px 45px rgba(31, 122, 99, 0.08);
-}
-
-.edit-title {
-	font-size: 25px;
-	font-weight: 900;
-	color: #054033;
-	margin-bottom: 6px;
-}
-
-.edit-subtitle {
-	font-size: 14px;
-	color: #52796f;
-}
-
-/* ---------- EMPTY STATE ---------- */
-
-.empty-state {
-	background: rgba(255, 255, 255, 0.72);
-	border: 1px dashed rgba(95, 208, 173, 0.42);
-	border-radius: 24px;
-	padding: 30px;
-	text-align: center;
-	color: #52796f;
-	margin-top: 12px;
-}
-
-.empty-title {
-	font-size: 21px;
-	font-weight: 900;
-	color: #054033;
-	margin-bottom: 6px;
-}
-
-/* ---------- DIVIDER ---------- */
-
-hr {
-	border-color: rgba(95, 208, 173, 0.18) !important;
-	margin-top: 2rem !important;
-	margin-bottom: 2rem !important;
-}
-
-/* ---------- RESPONSIVE ---------- */
-
-@media (max-width: 800px) {
-	h1 {
-		font-size: 42px !important;
-	}
-
-	.page-intro {
-		padding: 24px;
-	}
-
-	div[data-testid="stMetric"] [data-testid="stMetricValue"] {
-		font-size: 23px !important;
-	}
+.budget-separator {
+	height: 1px;
+	background: rgba(95, 208, 173, 0.14);
+	margin: 22px 0;
 }
 </style>
 """, unsafe_allow_html=True)
@@ -394,14 +278,9 @@ if st.session_state.get('username') is None:
 try:
 	_rerun = st.rerun
 except AttributeError:
-	try:
-		_rerun = st.experimental_rerun
-	except AttributeError:
-		def _rerun():
-			st.stop()
+	_rerun = st.experimental_rerun
 
 
-# Budgetdaten laden
 budget_data = dm.load_user_data(
 	'budget.csv',
 	initial_value=pd.DataFrame()
@@ -428,61 +307,24 @@ budget_data['spent_amount'] = pd.to_numeric(
 ).fillna(0.0)
 
 
-# Abos laden
-subs = dm.load_user_data(
-	'subscriptions.csv',
-	initial_value=pd.DataFrame()
-)
-
-if subs is not None and not subs.empty:
-
-	subs['amount'] = pd.to_numeric(
-		subs['amount'],
-		errors='coerce'
-	).fillna(0.0)
-
-	subs['active'] = subs.get('active', True)
-
-	monthly_sub_cost = subs[
-		subs['active'] == True
-	]['amount'].sum()
-
-else:
-	monthly_sub_cost = 0
-
-
-# Übersicht
-total_budget = (
-	budget_data['planned_amount'].sum()
-	if not budget_data.empty else 0
-)
-
-total_spent = (
-	budget_data['spent_amount'].sum()
-	if not budget_data.empty else 0
-) + monthly_sub_cost
-
+total_budget = budget_data['planned_amount'].sum()
+total_spent = budget_data['spent_amount'].sum()
 remaining = total_budget - total_spent
 
 
-col1, col2, col3, col4 = st.columns(4)
+col1, col2, col3 = st.columns(3)
 
 col1.metric(
-	"Abos / Monat",
-	f"CHF {monthly_sub_cost:.2f}"
-)
-
-col2.metric(
 	"Gesamtbudget",
 	f"CHF {total_budget:.2f}"
 )
 
-col3.metric(
+col2.metric(
 	"Ausgegeben",
 	f"CHF {total_spent:.2f}"
 )
 
-col4.metric(
+col3.metric(
 	"Verbleibend",
 	f"CHF {remaining:.2f}"
 )
@@ -491,8 +333,11 @@ col4.metric(
 st.divider()
 
 
-# Neue Kategorie
-st.markdown('<div class="section-title">Budgetkategorien</div>', unsafe_allow_html=True)
+st.markdown(
+	'<div class="section-title">Budgetkategorien</div>',
+	unsafe_allow_html=True
+)
+
 st.markdown(
 	'<div class="section-subtitle">Füge neue Kategorien hinzu, um dein Budget genauer aufzuteilen.</div>',
 	unsafe_allow_html=True
@@ -502,11 +347,11 @@ with st.expander("Neue Budgetkategorie hinzufügen"):
 
 	with st.form("add_budget"):
 
-		cat_col, amount_col = st.columns(2)
+		col1, col2 = st.columns(2)
 
-		category = cat_col.text_input("Kategorie")
+		category = col1.text_input("Kategorie")
 
-		planned_amount = amount_col.number_input(
+		planned_amount = col2.number_input(
 			"Geplanter Betrag (CHF)",
 			min_value=0.0,
 			step=1.0
@@ -548,104 +393,17 @@ with st.expander("Neue Budgetkategorie hinzufügen"):
 st.divider()
 
 
-# Bearbeiten
-if "edit_budget_idx" in st.session_state:
-
-	edit_idx = st.session_state["edit_budget_idx"]
-
-	if edit_idx < len(budget_data):
-
-		row = budget_data.iloc[edit_idx]
-
-		st.markdown(
-			f"""
-			<div class="edit-box">
-				<div class="edit-title">Kategorie bearbeiten: {row['category']}</div>
-				<div class="edit-subtitle">
-					Aktualisiere den geplanten Betrag oder erfasse deine bisherigen Ausgaben.
-				</div>
-			</div>
-			""",
-			unsafe_allow_html=True
-		)
-
-		with st.form("edit_budget"):
-
-			new_category = st.text_input(
-				"Kategorie",
-				value=row["category"]
-			)
-
-			new_planned_amount = st.number_input(
-				"Geplanter Betrag (CHF)",
-				min_value=0.0,
-				value=float(row["planned_amount"]),
-				step=1.0
-			)
-
-			new_spent_amount = st.number_input(
-				"Ausgaben (CHF)",
-				min_value=0.0,
-				value=float(
-					row.get("spent_amount", 0.0)
-				),
-				step=1.0
-			)
-
-			col1, col2 = st.columns(2)
-
-			if col1.form_submit_button("Speichern"):
-
-				budget_data.at[
-					edit_idx,
-					"category"
-				] = new_category
-
-				budget_data.at[
-					edit_idx,
-					"planned_amount"
-				] = new_planned_amount
-
-				budget_data.at[
-					edit_idx,
-					"spent_amount"
-				] = new_spent_amount
-
-				dm.save_user_data(
-					budget_data,
-					'budget.csv'
-				)
-
-				del st.session_state[
-					"edit_budget_idx"
-				]
-
-				st.success(
-					"Kategorie aktualisiert"
-				)
-
-				_rerun()
-
-			if col2.form_submit_button("Abbrechen"):
-
-				del st.session_state[
-					"edit_budget_idx"
-				]
-
-				_rerun()
-
-	st.divider()
-
-
-# Aktuelle Budgets
-st.markdown('<div class="section-title">Aktuelle Budgets</div>', unsafe_allow_html=True)
+st.markdown(
+	'<div class="section-title">Aktuelle Budgets</div>',
+	unsafe_allow_html=True
+)
 
 if not budget_data.empty:
 
 	for idx, row in budget_data.iterrows():
 
 		planned = float(row['planned_amount'])
-		spent = float(row.get('spent_amount', 0)) + float(monthly_sub_cost)
+		spent = float(row.get('spent_amount', 0))
 
 		if planned > 0:
 			percentage = (spent / planned) * 100
@@ -654,95 +412,80 @@ if not budget_data.empty:
 
 		progress_width = min(percentage, 100)
 
-		if percentage >= 100:
-			percent_class = "budget-percent-danger"
-			progress_class = "progress-fill-danger"
-		elif percentage >= 75:
-			percent_class = "budget-percent-warning"
-			progress_class = "progress-fill-warning"
-		else:
-			percent_class = "budget-percent"
-			progress_class = "progress-fill"
+		col1, col2, col3, col4, col5 = st.columns(
+			[2.1, 1.4, 1.4, 0.8, 1]
+		)
 
-		with st.container():
-
-			col1, col2, col3, col4, col5 = st.columns(
-				[2.1, 1.4, 1.4, 0.8, 1]
+		with col1:
+			st.markdown(
+				f"""
+				<div class="budget-category">{row['category']}</div>
+				<div class="progress-track">
+					<div class="progress-fill" style="width: {progress_width}%;"></div>
+				</div>
+				""",
+				unsafe_allow_html=True
 			)
 
-			with col1:
-				st.markdown(
-					f"""
-					<div class="budget-category">{row['category']}</div>
-					<div class="progress-track">
-						<div class="{progress_class}" style="width: {progress_width}%;"></div>
-					</div>
-					""",
-					unsafe_allow_html=True
+		with col2:
+			st.markdown(
+				f"""
+				<div class="budget-label">Geplant</div>
+				<div class="budget-value">CHF {planned:.2f}</div>
+				""",
+				unsafe_allow_html=True
+			)
+
+		with col3:
+			st.markdown(
+				f"""
+				<div class="budget-label">Ausgegeben</div>
+				<div class="budget-value">CHF {spent:.2f}</div>
+				""",
+				unsafe_allow_html=True
+			)
+
+		with col4:
+			st.markdown(
+				f'<div class="budget-percent">{percentage:.0f}%</div>',
+				unsafe_allow_html=True
+			)
+
+		with col5:
+
+			edit_col, delete_col = st.columns(2)
+
+			if edit_col.button(
+				"✏️",
+				key=f"edit-budget-{idx}"
+			):
+				st.session_state["edit_budget_idx"] = idx
+				_rerun()
+
+			if delete_col.button(
+				"🗑️",
+				key=f"delete-budget-{idx}"
+			):
+
+				budget_data = budget_data.drop(
+					index=idx
+				).reset_index(drop=True)
+
+				dm.save_user_data(
+					budget_data,
+					'budget.csv'
 				)
 
-			with col2:
-				st.markdown(
-					f"""
-					<div class="budget-label">Geplant</div>
-					<div class="budget-value">CHF {planned:.2f}</div>
-					""",
-					unsafe_allow_html=True
+				st.success(
+					"Kategorie gelöscht"
 				)
 
-			with col3:
-				st.markdown(
-					f"""
-					<div class="budget-label">Ausgegeben</div>
-					<div class="budget-value">CHF {spent:.2f}</div>
-					""",
-					unsafe_allow_html=True
-				)
+				_rerun()
 
-			with col4:
-				st.markdown(
-					f'<div class="{percent_class}">{percentage:.0f}%</div>',
-					unsafe_allow_html=True
-				)
-
-			with col5:
-
-				edit_col, delete_col = st.columns(2)
-
-				if edit_col.button(
-					"✏️",
-					key=f"edit-budget-{idx}",
-					help="Bearbeiten"
-				):
-
-					st.session_state[
-						"edit_budget_idx"
-					] = idx
-
-					_rerun()
-
-				if delete_col.button(
-					"🗑️",
-					key=f"delete-budget-{idx}",
-					help="Löschen"
-				):
-
-					budget_data = budget_data.drop(
-						index=idx
-					).reset_index(drop=True)
-
-					dm.save_user_data(
-						budget_data,
-						'budget.csv'
-					)
-
-					st.success(
-						"Kategorie gelöscht"
-					)
-
-					_rerun()
-
-			st.markdown('<div class="budget-row-spacer"></div>', unsafe_allow_html=True)
+		st.markdown(
+			'<div class="budget-separator"></div>',
+			unsafe_allow_html=True
+		)
 
 else:
 	st.markdown("""
