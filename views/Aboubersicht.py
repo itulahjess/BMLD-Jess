@@ -448,14 +448,6 @@ def render_subscription_cards(df):
 					Nächste Verlängerung:<br>
 					<strong>{next_due_text}</strong>
 				</div>
-				<div class="sub-detail">
-					Budgetanteil:<br>
-					<strong>{budget_text}</strong>
-				</div>
-				<div class="sub-detail">
-					Sparziel-Einfluss:<br>
-					<strong>{savings_text}</strong>
-				</div>
 				""",
 				unsafe_allow_html=True
 			)
@@ -481,6 +473,43 @@ def render_subscription_cards(df):
 st.markdown('<div class="section-title">Alle Abonnements</div>', unsafe_allow_html=True)
 
 render_subscription_cards(df)
+
+budget_spent = budget_data['spent_amount'].sum() + df[df['active'] == True]['amount'].sum()
+remaining_budget = budget_total - budget_spent
+if remaining_budget < 0:
+	remaining_budget = 0.0
+
+st.markdown('<div class="section-title">Budget- und Sparzielübersicht</div>', unsafe_allow_html=True)
+col1, col2 = st.columns(2)
+with col1:
+	st.markdown(
+		f"""
+		<div class="interval-card">
+			<div class="interval-label">Budget gesamt</div>
+			<div class="interval-value">CHF {budget_total:.2f}</div>
+		</div>
+		<div class="interval-card">
+			<div class="interval-label">Verbleibendes Budget</div>
+			<div class="interval-value">CHF {remaining_budget:.2f}</div>
+		</div>
+		""",
+		unsafe_allow_html=True
+	)
+	if st.button("Zum Budgetplaner", key="goto_budgetplaner"):
+		st.switch_page("views/Budgetplaner.py")
+
+with col2:
+	st.markdown(
+		f"""
+		<div class="interval-card">
+			<div class="interval-label">Sparziel offen</div>
+			<div class="interval-value">CHF {savings_needed:.2f}</div>
+		</div>
+		""",
+		unsafe_allow_html=True
+	)
+	if st.button("Zu Sparzielen", key="goto_sparziele"):
+		st.switch_page("views/Sparziele.py")
 
 st.markdown('<div class="section-title">Gesamtsumme aller Abos</div>', unsafe_allow_html=True)
 st.markdown(
