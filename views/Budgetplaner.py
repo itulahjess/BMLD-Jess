@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import date
 from utils.data_manager import DataManager
-
+from functions.icons import ICON_OPTIONS
 
 st.markdown("""
 <style>
@@ -221,7 +221,7 @@ budget_data = dm.load_user_data(
 if budget_data is None or budget_data.empty:
 	budget_data = pd.DataFrame(
 		columns=[
-			'category',
+			'icon',
 			'planned_amount',
 			'spent_amount',
 			'date'
@@ -303,20 +303,19 @@ with st.expander("Neue Budgetkategorie hinzufügen"):
 
 		col1, col2 = st.columns(2)
 
-		category = col1.text_input("Kategorie")
 
-		planned_amount = col2.number_input(
-			"Geplanter Betrag (CHF)",
-			min_value=0.0,
-			step=1.0
-		)
+		icon_labels = [f"{icon} {name}" for icon, name in ICON_OPTIONS.items()]
+		selected_icon_label = col1.selectbox("Kategorie", icon_labels)
+	
+
+		planned_amount = col2.number_input("Betrag (CHF)", min_value=0.0, step=1.0)
 
 		if st.form_submit_button("Kategorie hinzufügen"):
 
-			if category:
+			if selected_icon_label:
 
 				new_entry = pd.DataFrame([{
-					'category': category,
+					'icon': selected_icon_label,
 					'planned_amount': planned_amount,
 					'spent_amount': 0.0,
 					'date': date.today()
@@ -333,7 +332,7 @@ with st.expander("Neue Budgetkategorie hinzufügen"):
 				)
 
 				st.success(
-					f"Kategorie '{category}' hinzugefügt"
+					f"Kategorie '{selected_icon_label}' hinzugefügt"
 				)
 
 				_rerun()
@@ -366,6 +365,10 @@ if not budget_data.empty:
 
 		progress_width = min(percentage, 100)
 
+		icon = row.get('icon', '📱')
+		category = row['category'] if pd.notna(row['category']) else ""
+		category_name = f"{icon} {category}"
+
 		col1, col2, col3, col4, col5 = st.columns(
 			[2.1, 1.4, 1.4, 0.8, 1]
 		)
@@ -373,7 +376,7 @@ if not budget_data.empty:
 		with col1:
 			st.markdown(
 				f"""
-				<div class="budget-category">{row['category']}</div>
+				<div class="budget-category">{category_name}</div>
 				<div class="progress-track">
 					<div class="progress-fill" style="width: {progress_width}%;"></div>
 				</div>

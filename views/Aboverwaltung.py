@@ -730,8 +730,8 @@ if 'edit_idx' in st.session_state:
 
 else:
 
-	tab_alle, tab_monatlich, tab_jährlich = st.tabs(
-		['Alle', 'Monatlich', 'Jährlich']
+	tab_alle, tab_monatlich, tab_jährlich, tab_quartalsweise = st.tabs(
+		['Alle', 'Monatlich', 'Jährlich', 'Quartalsweise']
 	)
 
 	with tab_alle:
@@ -770,6 +770,21 @@ else:
 
 		_render_subscription_cards(
 			dfy,
+			editable=False
+		)
+	
+	with tab_quartalsweise:
+		
+		st.header('Quartalsweise Abonnements')
+
+		dfq = (
+			subs[subs['interval'] == 'Quarterly']
+			if not subs.empty
+			else subs
+		)
+
+		_render_subscription_cards(
+			dfq,
 			editable=False
 		)
 
