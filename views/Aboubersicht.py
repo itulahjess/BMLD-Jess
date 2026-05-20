@@ -276,6 +276,62 @@ df['active'] = df.get('active', True)
 if 'icon' not in df.columns:
 	df['icon'] = '📱'
 
+budget_data = dm.load_user_data(
+	'budget.csv',
+	initial_value=pd.DataFrame()
+)
+
+if budget_data is None or budget_data.empty:
+	budget_data = pd.DataFrame(
+		columns=[
+			'planned_amount',
+			'spent_amount'
+		]
+	)
+
+budget_data['planned_amount'] = pd.to_numeric(
+	budget_data.get('planned_amount', 0),
+	errors='coerce'
+).fillna(0.0)
+
+budget_data['spent_amount'] = pd.to_numeric(
+	budget_data.get('spent_amount', 0),
+	errors='coerce'
+).fillna(0.0)
+
+budget_total = budget_data['planned_amount'].sum()
+
+goals_data = dm.load_user_data(
+	'savings_goals.csv',
+	initial_value=pd.DataFrame()
+)
+
+if goals_data is None or goals_data.empty:
+	goals_data = pd.DataFrame(
+		columns=[
+			'goal_name',
+			'target_amount',
+			'current_amount'
+		]
+	)
+
+if 'target_amount' in goals_data.columns:
+	goals_data['target_amount'] = pd.to_numeric(
+		goals_data['target_amount'],
+		errors='coerce'
+	).fillna(0.0)
+
+if 'current_amount' in goals_data.columns:
+	goals_data['current_amount'] = pd.to_numeric(
+		goals_data['current_amount'],
+		errors='coerce'
+	).fillna(0.0)
+
+savings_needed = max(
+	goals_data['target_amount'].sum() - goals_data['current_amount'].sum(),
+	0.0
+)
+
 def _interval_to_text(interval):
 
 	if interval == "Monthly":
@@ -391,6 +447,14 @@ def render_subscription_cards(df):
 				<div class="sub-detail">
 					Nächste Verlängerung:<br>
 					<strong>{next_due_text}</strong>
+				</div>
+				<div class="sub-detail">
+					Budgetanteil:<br>
+					<strong>{budget_text}</strong>
+				</div>
+				<div class="sub-detail">
+					Sparziel-Einfluss:<br>
+					<strong>{savings_text}</strong>
 				</div>
 				""",
 				unsafe_allow_html=True
