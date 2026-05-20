@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 from datetime import date, timedelta
 from utils.data_manager import DataManager
+from functions.icons import ICON_OPTIONS
 
 
 
@@ -346,23 +347,7 @@ except AttributeError:
 			st.stop()
 
 
-ICON_OPTIONS = {
-	"📷": "Kamera",
-	"📱": "Smartphone",
-	"🎵": "Musik",
-	"📺": "TV",
-	"🎮": "Spiele",
-	"📚": "Bücher",
-	"💼": "Geschäft",
-	"🏠": "Zuhause",
-	"🍎": "Apple",
-	"🎥": "Video",
-	"🌐": "Web",
-	"📧": "E-Mail",
-	"📰": "Nachrichten",
-	"🎬": "Unterhaltung",
-	"💳": "Finanzen"
-}
+
 
 def _load():
 
