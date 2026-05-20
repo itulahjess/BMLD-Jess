@@ -192,9 +192,9 @@ st.title("Budgetplaner")
 
 st.markdown("""
 <div class="page-intro">
-	<div class="page-intro-title">Plane dein Budget</div>
+	<div class="page-intro-title">Plane dein monatliches Budget</div>
 	<div class="page-intro-text">
-		Erstelle Budgetkategorien, wähle monatliches oder jährliches Budget und behalte deine Ausgaben im Blick.
+		Erstelle Budgetkategorien, verfolge deine Ausgaben und sieh sofort, wie viel Budget noch verfügbar ist.
 	</div>
 </div>
 """, unsafe_allow_html=True)
@@ -222,11 +222,8 @@ if budget_data is None or budget_data.empty:
 	budget_data = pd.DataFrame(
 		columns=[
 			'icon',
-			'category',
 			'planned_amount',
 			'spent_amount',
-			'budget_period',
-			'last_reset',
 			'date'
 		]
 	)
@@ -241,37 +238,6 @@ budget_data['spent_amount'] = pd.to_numeric(
 	errors='coerce'
 ).fillna(0.0)
 
-if 'budget_period' not in budget_data.columns:
-	budget_data['budget_period'] = 'Monatlich'
-else:
-	budget_data['budget_period'] = budget_data['budget_period'].fillna('Monatlich')
-
-if 'last_reset' not in budget_data.columns:
-	budget_data['last_reset'] = date.today()
-else:
-	budget_data['last_reset'] = pd.to_datetime(
-		budget_data['last_reset'],
-		errors='coerce'
-	).dt.date
-	budget_data['last_reset'] = budget_data['last_reset'].fillna(date.today())
-
-# Reset budget entries at the start of a new month or year based on their period
-today = date.today()
-needs_save = False
-for idx, row in budget_data.iterrows():
-	period = row['budget_period']
-	last_reset = row['last_reset']
-	if period == 'Monatlich' and (last_reset.year, last_reset.month) != (today.year, today.month):
-		budget_data.at[idx, 'spent_amount'] = 0.0
-		budget_data.at[idx, 'last_reset'] = today
-		needs_save = True
-	elif period == 'Jährlich' and last_reset.year != today.year:
-		budget_data.at[idx, 'spent_amount'] = 0.0
-		budget_data.at[idx, 'last_reset'] = today
-		needs_save = True
-
-if needs_save:
-	dm.save_user_data(budget_data, 'budget.csv')
 
 subs = dm.load_user_data(
 	'subscriptions.csv',
@@ -299,6 +265,28 @@ total_budget = budget_data['planned_amount'].sum()
 total_spent = budget_data['spent_amount'].sum() + monthly_sub_cost
 remaining = total_budget - total_spent
 
+
+col1, col2, col3 = st.columns(3)
+
+col1.metric(
+	"Gesamtbudget",
+	f"CHF {total_budget:.2f}"
+)
+
+col2.metric(
+	"Ausgegeben",
+	f"CHF {total_spent:.2f}"
+)
+
+col3.metric(
+	"Verbleibend",
+	f"CHF {remaining:.2f}"
+)
+
+
+st.divider()
+
+
 st.markdown(
 	'<div class="section-title">Budgetkategorien</div>',
 	unsafe_allow_html=True
@@ -317,26 +305,19 @@ with st.expander("Neue Budgetkategorie hinzufügen"):
 
 
 		icon_labels = [f"{icon} {name}" for icon, name in ICON_OPTIONS.items()]
-		selected_icon_label = col1.selectbox("Symbol", icon_labels)
-		category_name = col1.text_input("Kategorie-Name", value="")
-		budget_period = col2.radio(
-			"Budgetperiode",
-			["Monatlich", "Jährlich"],
-			horizontal=True
-		)
+		selected_icon_label = col1.selectbox("Kategorie", icon_labels)
+	
 
 		planned_amount = col2.number_input("Betrag (CHF)", min_value=0.0, step=1.0)
 
 		if st.form_submit_button("Kategorie hinzufügen"):
 
-			if selected_icon_label and category_name.strip():
+			if selected_icon_label:
+
 				new_entry = pd.DataFrame([{
 					'icon': selected_icon_label,
-					'category': category_name.strip(),
 					'planned_amount': planned_amount,
 					'spent_amount': 0.0,
-					'budget_period': budget_period,
-					'last_reset': date.today(),
 					'date': date.today()
 				}])
 
@@ -351,7 +332,7 @@ with st.expander("Neue Budgetkategorie hinzufügen"):
 				)
 
 				st.success(
-					f"Kategorie '{category_name.strip()}' hinzugefügt"
+					f"Kategorie '{selected_icon_label}' hinzugefügt"
 				)
 
 				_rerun()
@@ -364,6 +345,67 @@ with st.expander("Neue Budgetkategorie hinzufügen"):
 
 st.divider()
 
+# Bearbeiten
+if "edit_budget_idx" in st.session_state:
+
+	edit_idx = st.session_state["edit_budget_idx"]
+
+	if edit_idx < len(budget_data):
+
+		row = budget_data.iloc[edit_idx]
+
+		st.markdown(
+			'<div class="section-title">Budget bearbeiten</div>',
+			unsafe_allow_html=True
+		)
+
+		with st.form("edit_budget_form"):
+
+			col1, col2 = st.columns(2)
+
+			icon_labels = [
+				f"{icon} {name}"
+				for icon, name in ICON_OPTIONS.items()
+			]
+
+			selected_icon_label = col1.selectbox(
+				"Kategorie",
+				icon_labels,
+				index=icon_labels.index(row["icon"])
+				if row["icon"] in icon_labels
+				else 0
+			)
+
+			planned_amount = col2.number_input(
+				"Betrag (CHF)",
+				min_value=0.0,
+				value=float(row["planned_amount"]),
+				step=1.0
+			)
+
+			save_col, cancel_col = st.columns(2)
+
+			if save_col.form_submit_button("Speichern"):
+
+				budget_data.at[edit_idx, "icon"] = selected_icon_label
+				budget_data.at[edit_idx, "planned_amount"] = planned_amount
+
+				dm.save_user_data(
+					budget_data,
+					'budget.csv'
+				)
+
+				del st.session_state["edit_budget_idx"]
+
+				st.success("Budget aktualisiert")
+
+				_rerun()
+
+			if cancel_col.form_submit_button("Abbrechen"):
+
+				del st.session_state["edit_budget_idx"]
+
+				_rerun()
 
 st.markdown(
 	'<div class="section-title">Aktuelle Budgets</div>',
@@ -375,26 +417,18 @@ if not budget_data.empty:
 	for idx, row in budget_data.iterrows():
 
 		planned = float(row['planned_amount'])
-		subscription_cost = 0.0
-		if subs is not None and not subs.empty:
-			subscription_cost = float(subs[subs['icon'] == row.get('icon', '')]['amount'].sum())
-		budget_used = float(row.get('spent_amount', 0)) + subscription_cost
-
-		icon = row.get('icon', '📱')
-		category = row['category'] if pd.notna(row['category']) else ""
-		category_name = f"{icon} {category}"
+		spent = float(row.get('spent_amount', 0)) + float(monthly_sub_cost)
 
 		if planned > 0:
-			percentage = (budget_used / planned) * 100
+			percentage = (spent / planned) * 100
 		else:
 			percentage = 0
 
 		progress_width = min(percentage, 100)
-		progress_color = (
-			"#ff5c5c"
-			if percentage > 100
-			else "linear-gradient(90deg, #5fd0ad, #1f7a63)"
-		)
+
+		icon = row.get('icon', '📱')
+		category = row['category'] if pd.notna(row['category']) else ""
+		category_name = f"{icon} {category}"
 
 		col1, col2, col3, col4, col5 = st.columns(
 			[2.1, 1.4, 1.4, 0.8, 1]
@@ -405,7 +439,7 @@ if not budget_data.empty:
 				f"""
 				<div class="budget-category">{category_name}</div>
 				<div class="progress-track">
-					<div class="progress-fill" style="width: {progress_width}%; background: {progress_color};"></div>
+					<div class="progress-fill" style="width: {progress_width}%;"></div>
 				</div>
 				""",
 				unsafe_allow_html=True
@@ -414,11 +448,24 @@ if not budget_data.empty:
 		with col2:
 			st.markdown(
 				f"""
-				<div class="budget-label">Betrag</div>
+				<div class="budget-label">Geplant</div>
 				<div class="budget-value">CHF {planned:.2f}</div>
-				<div class="budget-label">Verbraucht</div>
-				<div class="budget-value">CHF {budget_used:.2f}</div>
 				""",
+				unsafe_allow_html=True
+			)
+
+		with col3:
+			st.markdown(
+				f"""
+				<div class="budget-label">Ausgegeben</div>
+				<div class="budget-value">CHF {spent:.2f}</div>
+				""",
+				unsafe_allow_html=True
+			)
+
+		with col4:
+			st.markdown(
+				f'<div class="budget-percent">{percentage:.0f}%</div>',
 				unsafe_allow_html=True
 			)
 
@@ -457,42 +504,6 @@ if not budget_data.empty:
 			'<div class="budget-separator"></div>',
 			unsafe_allow_html=True
 		)
-
-	if st.session_state.get("edit_budget_idx") is not None:
-		edit_idx = st.session_state["edit_budget_idx"]
-		if 0 <= edit_idx < len(budget_data):
-			edit_row = budget_data.loc[edit_idx]
-			with st.expander(
-				f"Budgetkategorie bearbeiten: {edit_row.get('category', '')}",
-				expanded=True
-			):
-				with st.form("edit_budget_form"):
-					new_category = st.text_input(
-						"Kategorie-Name",
-						value=str(edit_row.get('category', ''))
-					)
-					new_amount = st.number_input(
-						"Betrag (CHF)",
-						min_value=0.0,
-						value=float(edit_row.get('planned_amount', 0.0)),
-						step=1.0
-					)
-					save = st.form_submit_button("Speichern")
-
-				if save:
-					budget_data.at[edit_idx, 'category'] = new_category
-					budget_data.at[edit_idx, 'icon'] = new_category
-					budget_data.at[edit_idx, 'planned_amount'] = new_amount
-					dm.save_user_data(budget_data, 'budget.csv')
-					st.success("Kategorie aktualisiert")
-					del st.session_state["edit_budget_idx"]
-					_rerun()
-
-			if st.button("Abbrechen", key="cancel_edit_budget"):
-				del st.session_state["edit_budget_idx"]
-				_rerun()
-		else:
-			del st.session_state["edit_budget_idx"]
 
 else:
 	st.markdown("""
