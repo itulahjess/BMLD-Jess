@@ -1,5 +1,6 @@
 import streamlit as st
 import pandas as pd
+from datetime import date, timedelta
 from utils.data_manager import DataManager
 
 
@@ -299,6 +300,41 @@ def _format_start_date(value):
 		return str(value)
 
 
+def _calculate_next_due_date(start_date, interval):
+
+	if pd.isna(start_date) or start_date is None:
+		return None
+
+	next_due = start_date
+	today = date.today()
+	iterations = 0
+	max_iterations = 100
+
+	if interval == "Monthly":
+		while next_due <= today and iterations < max_iterations:
+			try:
+				if next_due.month == 12:
+					next_due = next_due.replace(year=next_due.year + 1, month=1)
+				else:
+					next_due = next_due.replace(month=next_due.month + 1)
+			except ValueError:
+				next_due = next_due.replace(day=1) + timedelta(days=32)
+				next_due = next_due.replace(day=1)
+			iterations += 1
+
+	elif interval == "Yearly":
+		while next_due <= today and iterations < max_iterations:
+			next_due = next_due.replace(year=next_due.year + 1)
+			iterations += 1
+
+	elif interval == "Quarterly":
+		while next_due <= today and iterations < max_iterations:
+			next_due = next_due + timedelta(days=91)
+			iterations += 1
+
+	return next_due
+
+
 def render_subscription_cards(df):
 
 	if df.empty:
@@ -315,6 +351,12 @@ def render_subscription_cards(df):
 		icon = row.get("icon", "📱")
 		interval_text = _interval_to_text(row["interval"])
 		start_date_text = _format_start_date(row.get("start_date", None))
+		next_due = _calculate_next_due_date(row.get("start_date", None), row.get("interval", None))
+		next_due_text = (
+			next_due.strftime("%d.%m.%Y")
+			if next_due is not None
+			else "Kein Fälligkeitsdatum"
+		)
 
 		status_class = (
 			"status-active"
@@ -346,6 +388,10 @@ def render_subscription_cards(df):
 					Startdatum:<br>
 					<strong>{start_date_text}</strong>
 				</div>
+				<div class="sub-detail">
+					Nächste Fälligkeit:<br>
+					<strong>{next_due_text}</strong>
+				</div>
 				""",
 				unsafe_allow_html=True
 			)
@@ -372,6 +418,16 @@ st.markdown('<div class="section-title">Alle Abonnements</div>', unsafe_allow_ht
 
 render_subscription_cards(df)
 
+st.markdown('<div class="section-title">Gesamtsumme aller Abos</div>', unsafe_allow_html=True)
+st.markdown(
+	f"""
+	<div class="interval-card">
+		<div class="interval-label">Gesamtkosten</div>
+		<div class="interval-value">CHF {df['amount'].sum():.2f}</div>
+	</div>
+	""",
+	unsafe_allow_html=True
+)
 
 st.divider()
 
