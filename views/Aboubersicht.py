@@ -355,7 +355,7 @@ def render_subscription_cards(df):
 		next_due_text = (
 			next_due.strftime("%d.%m.%Y")
 			if next_due is not None
-			else "Kein Fälligkeitsdatum"
+			else "Keine Verlängerung berechenbar"
 		)
 
 		status_class = (
@@ -389,7 +389,7 @@ def render_subscription_cards(df):
 					<strong>{start_date_text}</strong>
 				</div>
 				<div class="sub-detail">
-					Nächste Fälligkeit:<br>
+					Nächste Verlängerung:<br>
 					<strong>{next_due_text}</strong>
 				</div>
 				""",
