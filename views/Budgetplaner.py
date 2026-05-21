@@ -107,6 +107,8 @@ div[data-testid="stMetric"] [data-testid="stMetricValue"] {
 }
 
 .stButton > button {
+	width: 100%;
+	height: 56px;
 	border-radius: 16px !important;
 	border: 1px solid rgba(95, 208, 173, 0.26) !important;
 	background: rgba(255, 255, 255, 0.78) !important;
@@ -317,10 +319,8 @@ with st.expander("Neue Budgetkategorie hinzufügen"):
 
 		col1, col2 = st.columns(2)
 
-
 		icon_labels = [f"{icon} {name}" for icon, name in ICON_OPTIONS.items()]
 		selected_icon_label = col1.selectbox("Kategorie", icon_labels)
-	
 
 		planned_amount = col2.number_input("Betrag (CHF)", min_value=0.0, step=1.0)
 
@@ -359,7 +359,6 @@ with st.expander("Neue Budgetkategorie hinzufügen"):
 
 st.divider()
 
-# Bearbeiten
 if "edit_budget_idx" in st.session_state:
 
 	edit_idx = st.session_state["edit_budget_idx"]
@@ -422,8 +421,6 @@ if "edit_budget_idx" in st.session_state:
 				_rerun()
 
 
-
-# AUSGABE HINZUFÜGEN
 st.markdown(
 	'<div class="section-title">Neue Ausgabe</div>',
 	unsafe_allow_html=True
@@ -479,7 +476,6 @@ with st.expander("Ausgabe hinzufügen"):
 			_rerun()
 
 
-# AUSGABE BEARBEITEN
 if "edit_expense_idx" in st.session_state:
 
 	edit_idx = st.session_state["edit_expense_idx"]
@@ -548,7 +544,6 @@ if "edit_expense_idx" in st.session_state:
 				_rerun()
 
 
-# AKTUELLE BUDGETS
 st.markdown(
 	'<div class="section-title">Aktuelle Budgets</div>',
 	unsafe_allow_html=True
@@ -572,7 +567,6 @@ if not budget_data.empty:
 			percentage = 0
 
 		progress_width = min(percentage, 100)
-
 		category_name = row['icon']
 
 		col1, col2, col3, col4, col5 = st.columns(
@@ -644,23 +638,22 @@ if not budget_data.empty:
 				_rerun()
 
 
-		# AUSGABEN DER KATEGORIE
 		if not category_expenses.empty:
 
 			for expense_idx, expense in category_expenses.iterrows():
 
-				box1, box2 = st.columns([5, 1])
+				box1, box2, box3, box4, box5 = st.columns(
+					[2.1, 1.4, 1.4, 0.8, 1]
+				)
 
 				with box1:
-
 					st.markdown(
 						f"""
 						<div style="
-							margin-left:20px;
 							margin-top:8px;
-							padding:12px;
+							padding:18px;
 							background:white;
-							border-radius:12px;
+							border-radius:16px;
 							border:1px solid rgba(95,208,173,0.15);
 						">
 							<strong>{expense['description']}</strong><br>
@@ -671,7 +664,15 @@ if not budget_data.empty:
 					)
 
 				with box2:
+					st.empty()
 
+				with box3:
+					st.empty()
+
+				with box4:
+					st.empty()
+
+				with box5:
 					edit_btn, delete_btn = st.columns(2)
 
 					if edit_btn.button(
