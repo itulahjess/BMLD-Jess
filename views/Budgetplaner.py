@@ -223,7 +223,6 @@ if budget_data is None or budget_data.empty:
 		columns=[
 			'icon',
 			'planned_amount',
-			'spent_amount',
 			'date'
 		]
 	)
@@ -233,11 +232,26 @@ budget_data['planned_amount'] = pd.to_numeric(
 	errors='coerce'
 ).fillna(0.0)
 
-budget_data['spent_amount'] = pd.to_numeric(
-	budget_data.get('spent_amount', 0),
+
+expenses_data = dm.load_user_data(
+	'expenses.csv',
+	initial_value=pd.DataFrame()
+)
+
+if expenses_data is None or expenses_data.empty:
+	expenses_data = pd.DataFrame(
+		columns=[
+			'category',
+			'description',
+			'amount',
+			'date'
+		]
+	)
+
+expenses_data['amount'] = pd.to_numeric(
+	expenses_data.get('amount', 0),
 	errors='coerce'
 ).fillna(0.0)
-
 
 subs = dm.load_user_data(
 	'subscriptions.csv',
@@ -262,7 +276,7 @@ else:
 
 
 total_budget = budget_data['planned_amount'].sum()
-total_spent = budget_data['spent_amount'].sum() + monthly_sub_cost
+total_spent = expenses_data['amount'].sum()
 remaining = total_budget - total_spent
 
 
@@ -407,6 +421,134 @@ if "edit_budget_idx" in st.session_state:
 
 				_rerun()
 
+
+
+# AUSGABE HINZUFÜGEN
+st.markdown(
+	'<div class="section-title">Neue Ausgabe</div>',
+	unsafe_allow_html=True
+)
+
+with st.expander("Ausgabe hinzufügen"):
+
+	with st.form("add_expense"):
+
+		col1, col2 = st.columns(2)
+
+		icon_labels = [
+			f"{icon} {name}"
+			for icon, name in ICON_OPTIONS.items()
+		]
+
+		selected_category = col1.selectbox(
+			"Kategorie",
+			icon_labels
+		)
+
+		description = col2.text_input("Beschreibung")
+
+		amount = st.number_input(
+			"Betrag (CHF)",
+			min_value=0.0,
+			step=1.0
+		)
+
+		expense_date = st.date_input("Datum")
+
+		if st.form_submit_button("Ausgabe speichern"):
+
+			new_expense = pd.DataFrame([{
+				'category': selected_category,
+				'description': description,
+				'amount': amount,
+				'date': expense_date
+			}])
+
+			expenses_data = pd.concat(
+				[expenses_data, new_expense],
+				ignore_index=True
+			)
+
+			dm.save_user_data(
+				expenses_data,
+				'expenses.csv'
+			)
+
+			st.success("Ausgabe hinzugefügt")
+
+			_rerun()
+
+
+# AUSGABE BEARBEITEN
+if "edit_expense_idx" in st.session_state:
+
+	edit_idx = st.session_state["edit_expense_idx"]
+
+	if edit_idx < len(expenses_data):
+
+		expense = expenses_data.iloc[edit_idx]
+
+		st.markdown(
+			'<div class="section-title">Ausgabe bearbeiten</div>',
+			unsafe_allow_html=True
+		)
+
+		with st.form("edit_expense_form"):
+
+			col1, col2 = st.columns(2)
+
+			icon_labels = [
+				f"{icon} {name}"
+				for icon, name in ICON_OPTIONS.items()
+			]
+
+			selected_category = col1.selectbox(
+				"Kategorie",
+				icon_labels,
+				index=icon_labels.index(expense["category"])
+				if expense["category"] in icon_labels
+				else 0
+			)
+
+			description = col2.text_input(
+				"Beschreibung",
+				value=expense["description"]
+			)
+
+			amount = st.number_input(
+				"Betrag (CHF)",
+				min_value=0.0,
+				value=float(expense["amount"]),
+				step=1.0
+			)
+
+			save_col, cancel_col = st.columns(2)
+
+			if save_col.form_submit_button("Speichern"):
+
+				expenses_data.at[edit_idx, "category"] = selected_category
+				expenses_data.at[edit_idx, "description"] = description
+				expenses_data.at[edit_idx, "amount"] = amount
+
+				dm.save_user_data(
+					expenses_data,
+					'expenses.csv'
+				)
+
+				del st.session_state["edit_expense_idx"]
+
+				st.success("Ausgabe aktualisiert")
+
+				_rerun()
+
+			if cancel_col.form_submit_button("Abbrechen"):
+
+				del st.session_state["edit_expense_idx"]
+
+				_rerun()
+
+
+# AKTUELLE BUDGETS
 st.markdown(
 	'<div class="section-title">Aktuelle Budgets</div>',
 	unsafe_allow_html=True
@@ -417,7 +559,12 @@ if not budget_data.empty:
 	for idx, row in budget_data.iterrows():
 
 		planned = float(row['planned_amount'])
-		spent = float(row.get('spent_amount', 0)) + float(monthly_sub_cost)
+
+		category_expenses = expenses_data[
+			expenses_data['category'] == row['icon']
+		]
+
+		spent = category_expenses['amount'].sum()
 
 		if planned > 0:
 			percentage = (spent / planned) * 100
@@ -426,9 +573,7 @@ if not budget_data.empty:
 
 		progress_width = min(percentage, 100)
 
-		icon = row.get('icon', '📱')
-		category = row['category'] if pd.notna(row['category']) else ""
-		category_name = f"{icon} {category}"
+		category_name = row['icon']
 
 		col1, col2, col3, col4, col5 = st.columns(
 			[2.1, 1.4, 1.4, 0.8, 1]
@@ -439,7 +584,7 @@ if not budget_data.empty:
 				f"""
 				<div class="budget-category">{category_name}</div>
 				<div class="progress-track">
-					<div class="progress-fill" style="width: {progress_width}%;"></div>
+					<div class="progress-fill" style="width:{progress_width}%"></div>
 				</div>
 				""",
 				unsafe_allow_html=True
@@ -494,11 +639,65 @@ if not budget_data.empty:
 					'budget.csv'
 				)
 
-				st.success(
-					"Kategorie gelöscht"
-				)
+				st.success("Kategorie gelöscht")
 
 				_rerun()
+
+
+		# AUSGABEN DER KATEGORIE
+		if not category_expenses.empty:
+
+			for expense_idx, expense in category_expenses.iterrows():
+
+				box1, box2 = st.columns([5, 1])
+
+				with box1:
+
+					st.markdown(
+						f"""
+						<div style="
+							margin-left:20px;
+							margin-top:8px;
+							padding:12px;
+							background:white;
+							border-radius:12px;
+							border:1px solid rgba(95,208,173,0.15);
+						">
+							<strong>{expense['description']}</strong><br>
+							CHF {expense['amount']:.2f}
+						</div>
+						""",
+						unsafe_allow_html=True
+					)
+
+				with box2:
+
+					edit_btn, delete_btn = st.columns(2)
+
+					if edit_btn.button(
+						"✏️",
+						key=f"edit-expense-{expense_idx}"
+					):
+						st.session_state["edit_expense_idx"] = expense_idx
+						_rerun()
+
+					if delete_btn.button(
+						"🗑️",
+						key=f"delete-expense-{expense_idx}"
+					):
+
+						expenses_data = expenses_data.drop(
+							index=expense_idx
+						).reset_index(drop=True)
+
+						dm.save_user_data(
+							expenses_data,
+							'expenses.csv'
+						)
+
+						st.success("Ausgabe gelöscht")
+
+						_rerun()
 
 		st.markdown(
 			'<div class="budget-separator"></div>',
@@ -506,6 +705,7 @@ if not budget_data.empty:
 		)
 
 else:
+
 	st.markdown("""
 	<div class="empty-state">
 		<div class="empty-title">Keine Budgetkategorien vorhanden</div>
