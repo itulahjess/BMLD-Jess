@@ -1,333 +1,32 @@
 import streamlit as st
 import pandas as pd
-from datetime import date, timedelta
+from datetime import date
 from utils.data_manager import DataManager
 from functions.icons import ICON_OPTIONS
+from functions.aboverwaltung import (
+	get_rerun_function,
+	load_subscriptions_data,
+	save_subscriptions_data,
+	calculate_next_renewal,
+	interval_to_text,
+	interval_to_english,
+	interval_to_german
+)
+from functions.design import (
+	apply_global_styles,
+	render_page_intro,
+	render_empty_state
+)
 
 
-
-
-st.markdown("""
-<style>
-/* ---------- GLOBAL PAGE STYLE ---------- */
-
-.stApp {
-	background:
-		radial-gradient(circle at top right, rgba(116, 222, 188, 0.22), transparent 34%),
-		radial-gradient(circle at bottom left, rgba(203, 245, 229, 0.35), transparent 38%),
-		#f5fbf8;
-	color: #2f3038;
-}
-
-.block-container {
-	padding-top: 2.2rem;
-	padding-bottom: 3rem;
-	max-width: 1050px;
-}
-
-/* ---------- TYPOGRAPHY ---------- */
-
-h1 {
-	font-size: 52px !important;
-	font-weight: 800 !important;
-	letter-spacing: -1.8px !important;
-	color: #2f3038 !important;
-	margin-bottom: 1.2rem !important;
-}
-
-h2, h3 {
-	color: #2f3038 !important;
-	letter-spacing: -0.7px !important;
-}
-
-p, label, span {
-	color: #2f3038;
-}
-
-/* ---------- PAGE INTRO ---------- */
-
-.page-intro {
-	position: relative;
-	overflow: hidden;
-	background:
-		linear-gradient(135deg, rgba(232, 255, 245, 0.96), rgba(255, 255, 255, 0.76));
-	padding: 28px 32px;
-	border-radius: 28px;
-	border: 1px solid rgba(95, 208, 173, 0.18);
-	box-shadow: 0 18px 45px rgba(31, 122, 99, 0.08);
-	margin-bottom: 28px;
-	backdrop-filter: blur(14px);
-}
-
-.page-intro::before {
-	content: "";
-	position: absolute;
-	width: 190px;
-	height: 190px;
-	border-radius: 50%;
-	background: rgba(95, 208, 173, 0.14);
-	top: -80px;
-	right: -60px;
-}
-
-.page-intro-title {
-	position: relative;
-	z-index: 1;
-	font-size: 24px;
-	font-weight: 900;
-	color: #054033;
-	margin-bottom: 6px;
-}
-
-.page-intro-text {
-	position: relative;
-	z-index: 1;
-	font-size: 15px;
-	color: #52796f;
-	line-height: 1.5;
-}
-
-/* ---------- TABS ---------- */
-
-button[data-baseweb="tab"] {
-	font-size: 16px;
-	font-weight: 700;
-	color: #52796f;
-	padding: 12px 18px;
-	border-radius: 999px;
-	margin-right: 8px;
-	transition: all 0.2s ease;
-}
-
-button[data-baseweb="tab"]:hover {
-	background: rgba(95, 208, 173, 0.12);
-	color: #054033;
-}
-
-button[data-baseweb="tab"][aria-selected="true"] {
-	background: #5fd0ad;
-	color: white;
-}
-
-div[data-baseweb="tab-highlight"] {
-	display: none;
-}
-
-/* ---------- SUBSCRIPTION ROWS ---------- */
-
-.sub-icon {
-	width: 54px;
-	height: 54px;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 18px;
-	background: linear-gradient(145deg, rgba(232, 255, 245, 1), rgba(255, 255, 255, 0.75));
-	font-size: 28px;
-	box-shadow:
-		inset 0 0 0 1px rgba(95, 208, 173, 0.16),
-		0 10px 22px rgba(31, 122, 99, 0.08);
-}
-
-.sub-name {
-	font-size: 20px;
-	font-weight: 900;
-	color: #054033;
-	margin-bottom: 4px;
-	letter-spacing: -0.2px;
-}
-
-.sub-detail {
-	font-size: 14px;
-	color: #6b9080;
-	line-height: 1.45;
-}
-
-.sub-price {
-	font-size: 19px;
-	font-weight: 900;
-	color: #2f3038;
-	margin-bottom: 4px;
-}
-
-.sub-interval {
-	font-size: 14px;
-	color: #7b8790;
-}
-
-.status-active {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	padding: 8px 13px;
-	border-radius: 999px;
-	background: rgba(95, 208, 173, 0.16);
-	color: #1f7a63;
-	font-weight: 800;
-	font-size: 14px;
-}
-
-.status-inactive {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	padding: 8px 13px;
-	border-radius: 999px;
-	background: rgba(255, 120, 120, 0.13);
-	color: #a13a3a;
-	font-weight: 800;
-	font-size: 14px;
-}
-
-.subscription-separator {
-	height: 1px;
-	background: rgba(95, 208, 173, 0.14);
-	margin: 22px 0;
-}
-
-/* ---------- STREAMLIT BUTTONS ---------- */
-
-.stButton > button {
-	border-radius: 16px !important;
-	border: 1px solid rgba(95, 208, 173, 0.26) !important;
-	background: rgba(255, 255, 255, 0.78) !important;
-	color: #054033 !important;
-	font-weight: 800 !important;
-	box-shadow: 0 8px 20px rgba(31, 122, 99, 0.08) !important;
-	transition: all 0.2s ease !important;
-}
-
-.stButton > button:hover {
-	transform: translateY(-2px);
-	border: 1px solid rgba(95, 208, 173, 0.48) !important;
-	box-shadow: 0 14px 28px rgba(31, 122, 99, 0.13) !important;
-	background: #e8fff5 !important;
-	color: #054033 !important;
-}
-
-/* ---------- EXPANDER ---------- */
-
-.streamlit-expanderHeader {
-	background: rgba(255, 255, 255, 0.72);
-	border-radius: 18px;
-	border: 1px solid rgba(95, 208, 173, 0.18);
-	font-weight: 800;
-	color: #054033;
-}
-
-div[data-testid="stExpander"] {
-	border: none;
-	background: transparent;
-}
-
-div[data-testid="stExpander"] details {
-	background: rgba(255, 255, 255, 0.5);
-	border-radius: 22px;
-	border: 1px solid rgba(95, 208, 173, 0.18);
-	box-shadow: 0 14px 34px rgba(31, 122, 99, 0.06);
-}
-
-/* ---------- INPUTS ---------- */
-
-.stTextInput input,
-.stNumberInput input,
-.stDateInput input,
-.stSelectbox div[data-baseweb="select"],
-.stCheckbox {
-	border-radius: 14px !important;
-}
-
-.stTextInput input,
-.stNumberInput input,
-.stDateInput input {
-	background: rgba(255, 255, 255, 0.85) !important;
-	border: 1px solid rgba(95, 208, 173, 0.22) !important;
-	color: #2f3038 !important;
-}
-
-.stTextInput input:focus,
-.stNumberInput input:focus,
-.stDateInput input:focus {
-	border-color: #5fd0ad !important;
-	box-shadow: 0 0 0 3px rgba(95, 208, 173, 0.16) !important;
-}
-
-/* ---------- EDIT BOX ---------- */
-
-.edit-box {
-	background:
-		linear-gradient(135deg, rgba(232, 255, 245, 0.95), rgba(255, 255, 255, 0.78));
-	border: 1px solid rgba(95, 208, 173, 0.2);
-	border-radius: 28px;
-	padding: 24px 28px;
-	margin-bottom: 24px;
-	box-shadow: 0 18px 45px rgba(31, 122, 99, 0.08);
-}
-
-.edit-title {
-	font-size: 25px;
-	font-weight: 900;
-	color: #054033;
-	margin-bottom: 6px;
-}
-
-.edit-subtitle {
-	font-size: 14px;
-	color: #52796f;
-}
-
-/* ---------- EMPTY STATE ---------- */
-
-.empty-state {
-	background: rgba(255, 255, 255, 0.72);
-	border: 1px dashed rgba(95, 208, 173, 0.42);
-	border-radius: 24px;
-	padding: 30px;
-	text-align: center;
-	color: #52796f;
-	margin-top: 12px;
-}
-
-.empty-title {
-	font-size: 21px;
-	font-weight: 900;
-	color: #054033;
-	margin-bottom: 6px;
-}
-
-/* ---------- DIVIDER ---------- */
-
-hr {
-	border-color: rgba(95, 208, 173, 0.18) !important;
-	margin-top: 2rem !important;
-	margin-bottom: 2rem !important;
-}
-
-/* ---------- RESPONSIVE ---------- */
-
-@media (max-width: 800px) {
-	h1 {
-		font-size: 42px !important;
-	}
-
-	.page-intro {
-		padding: 24px;
-	}
-}
-</style>
-""", unsafe_allow_html=True)
-
+apply_global_styles()
 
 st.title("Aboverwaltung")
 
-st.markdown("""
-<div class="page-intro">
-	<div class="page-intro-title">Verwalte deine Abonnements</div>
-	<div class="page-intro-text">
-		Behalte aktive und inaktive Abos im Blick, aktualisiere Beträge und prüfe die nächste Verlängerung.
-	</div>
-</div>
-""", unsafe_allow_html=True)
+render_page_intro(
+	"Verwalte deine Abonnements",
+	"Behalte aktive und inaktive Abos im Blick, aktualisiere Beträge und prüfe die nächste Verlängerung."
+)
 
 
 dm = DataManager()
@@ -337,179 +36,28 @@ if st.session_state.get('username') is None:
 	st.stop()
 
 
-try:
-	_rerun = st.rerun
-except AttributeError:
-	try:
-		_rerun = st.experimental_rerun
-	except AttributeError:
-		def _rerun():
-			st.stop()
+_rerun = get_rerun_function()
 
 
-
-
-def _load():
-
-	df = dm.load_user_data(
-		'subscriptions.csv',
-		initial_value=pd.DataFrame()
-	)
-
-	if df is None or df.empty:
-		return pd.DataFrame(
-			columns=[
-				'name',
-				'start_date',
-				'amount',
-				'interval',
-				'active',
-				'link',
-				'icon'
-			]
-		)
-
-	if 'provider' in df.columns:
-		df = df.drop(columns=['provider'])
-
-	if 'timestamp' in df.columns:
-		df = df.drop(columns=['timestamp'])
-
-	if 'notes' in df.columns and 'link' not in df.columns:
-
-		df['link'] = df['notes'].astype(str).where(
-			df['notes'].astype(str).str.contains(
-				r'^https?://',
-				na=False
-			),
-			''
-		)
-
-		df = df.drop(columns=['notes'])
-
-	if 'link' not in df.columns:
-		df['link'] = ''
-
-	if 'icon' not in df.columns:
-		df['icon'] = '📱'
-
-	if 'start_date' in df.columns:
-		df['start_date'] = pd.to_datetime(
-			df['start_date'],
-			errors='coerce'
-		).dt.date
-
-	df['amount'] = pd.to_numeric(
-		df['amount'],
-		errors='coerce'
-	).fillna(0.0)
-
-	df['active'] = df.get('active', True)
-
-	df['link'] = df['link'].astype(str).fillna('')
-
-	return df
-
-
-def _save(df):
-	dm.save_user_data(df, 'subscriptions.csv')
-
-
-def _calculate_next_renewal(start_date, interval):
-
-	if pd.isna(start_date):
-		return date.today()
-
-	next_renewal = start_date
-	today = date.today()
-
-	max_iterations = 100
-	iterations = 0
-
-	if interval == 'Monthly':
-
-		while next_renewal <= today and iterations < max_iterations:
-
-			try:
-
-				if next_renewal.month == 12:
-
-					next_renewal = next_renewal.replace(
-						year=next_renewal.year + 1,
-						month=1
-					)
-
-				else:
-
-					next_renewal = next_renewal.replace(
-						month=next_renewal.month + 1
-					)
-
-			except ValueError:
-
-				next_renewal = (
-					next_renewal.replace(day=1)
-					+ timedelta(days=32)
-				)
-
-				next_renewal = next_renewal.replace(day=1)
-
-			iterations += 1
-
-	elif interval == 'Yearly':
-
-		while next_renewal <= today and iterations < max_iterations:
-
-			next_renewal = next_renewal.replace(
-				year=next_renewal.year + 1
-			)
-
-			iterations += 1
-
-	elif interval == 'Quarterly':
-
-		while next_renewal <= today and iterations < max_iterations:
-
-			next_renewal = next_renewal + timedelta(days=91)
-
-			iterations += 1
-
-	return next_renewal
-
-
-def _interval_to_text(interval):
-
-	if interval == 'Monthly':
-		return 'Monatlich'
-
-	if interval == 'Yearly':
-		return 'Jährlich'
-
-	if interval == 'Quarterly':
-		return 'Quartalsweise'
-
-	return interval
-
-
-def _render_subscription_cards(df, editable=True):
+def render_subscription_cards(df, editable=True):
 
 	if df.empty:
-		st.markdown("""
-		<div class="empty-state">
-			<div class="empty-title">Noch keine Abonnements vorhanden</div>
-			<div>Füge unten dein erstes Abo hinzu, um deine Kosten zu verwalten.</div>
-		</div>
-		""", unsafe_allow_html=True)
+		render_empty_state(
+			"Noch keine Abonnements vorhanden",
+			"Füge unten dein erstes Abo hinzu, um deine Kosten zu verwalten."
+		)
 		return
 
 	for idx, row in df.iterrows():
 
-		next_renewal = _calculate_next_renewal(
+		next_renewal = calculate_next_renewal(
 			row['start_date'],
 			row['interval']
 		)
 
-		interval_text = _interval_to_text(row['interval'])
+		interval_text = interval_to_text(
+			row['interval']
+		)
 
 		status_class = (
 			"status-active"
@@ -540,7 +88,10 @@ def _render_subscription_cards(df, editable=True):
 		)
 
 		with col1:
-			st.markdown(icon_html, unsafe_allow_html=True)
+			st.markdown(
+				icon_html,
+				unsafe_allow_html=True
+			)
 
 		with col2:
 			st.markdown(
@@ -579,10 +130,13 @@ def _render_subscription_cards(df, editable=True):
 				st.session_state['edit_idx'] = idx
 				_rerun()
 
-		st.markdown('<div class="subscription-separator"></div>', unsafe_allow_html=True)
+		st.markdown(
+			'<div class="subscription-separator"></div>',
+			unsafe_allow_html=True
+		)
 
 
-subs = _load()
+subs = load_subscriptions_data(dm)
 
 
 if 'edit_idx' in st.session_state:
@@ -636,11 +190,9 @@ if 'edit_idx' in st.session_state:
 					'Jährlich',
 					'Quartalsweise'
 				].index(
-					'Monatlich'
-					if row['interval'] == 'Monthly'
-					else 'Jährlich'
-					if row['interval'] == 'Yearly'
-					else 'Quartalsweise'
+					interval_to_german(
+						row['interval']
+					)
 				)
 			)
 
@@ -676,24 +228,20 @@ if 'edit_idx' in st.session_state:
 
 				sd = sd.date() if not pd.isna(sd) else None
 
-				interval_map = {
-					'Monatlich': 'Monthly',
-					'Jährlich': 'Yearly',
-					'Quartalsweise': 'Quarterly'
-				}
-
 				subs.at[edit_idx, 'name'] = ename
 				subs.at[edit_idx, 'start_date'] = sd
 				subs.at[edit_idx, 'amount'] = float(eamount)
-				subs.at[edit_idx, 'interval'] = interval_map.get(
-					einterval,
-					'Monthly'
+				subs.at[edit_idx, 'interval'] = interval_to_english(
+					einterval
 				)
 				subs.at[edit_idx, 'active'] = bool(eactive)
 				subs.at[edit_idx, 'link'] = elink
 				subs.at[edit_idx, 'icon'] = eicon
 
-				_save(subs)
+				save_subscriptions_data(
+					dm,
+					subs
+				)
 
 				del st.session_state['edit_idx']
 
@@ -707,7 +255,10 @@ if 'edit_idx' in st.session_state:
 					index=edit_idx
 				).reset_index(drop=True)
 
-				_save(subs)
+				save_subscriptions_data(
+					dm,
+					subs
+				)
 
 				del st.session_state['edit_idx']
 
@@ -738,7 +289,7 @@ else:
 
 		st.header('Alle Abonnements')
 
-		_render_subscription_cards(
+		render_subscription_cards(
 			subs,
 			editable=True
 		)
@@ -753,7 +304,7 @@ else:
 			else subs
 		)
 
-		_render_subscription_cards(
+		render_subscription_cards(
 			dfm,
 			editable=False
 		)
@@ -768,13 +319,13 @@ else:
 			else subs
 		)
 
-		_render_subscription_cards(
+		render_subscription_cards(
 			dfy,
 			editable=False
 		)
-	
+
 	with tab_quartalsweise:
-		
+
 		st.header('Quartalsweise Abonnements')
 
 		dfq = (
@@ -783,7 +334,7 @@ else:
 			else subs
 		)
 
-		_render_subscription_cards(
+		render_subscription_cards(
 			dfq,
 			editable=False
 		)
@@ -851,17 +402,11 @@ else:
 						else None
 					)
 
-					interval_map = {
-						'Monatlich': 'Monthly',
-						'Jährlich': 'Yearly',
-						'Quartalsweise': 'Quarterly'
-					}
-
 					rec = {
 						'name': name,
 						'start_date': sd,
 						'amount': float(amount),
-						'interval': interval_map[interval],
+						'interval': interval_to_english(interval),
 						'active': active,
 						'link': link,
 						'icon': icon
@@ -875,11 +420,13 @@ else:
 						ignore_index=True
 					)
 
-					_save(subs)
+					save_subscriptions_data(
+						dm,
+						subs
+					)
 
 					st.success(
 						'Abonnement hinzugefügt'
 					)
 
 					_rerun()
-
