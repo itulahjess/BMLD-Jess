@@ -14,5 +14,9 @@ ICON_OPTIONS = {
 	"📧": "E-Mail",
 	"📰": "Nachrichten",
 	"🎬": "Unterhaltung",
-	"💳": "Finanzen"
+	"💳": "Finanzen",
+    "⚽": "Sport",
+	"🎨": "Kunst",
+    "🚗": "Auto",
+    "🎤": "Musik",
 }

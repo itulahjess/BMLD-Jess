@@ -112,6 +112,12 @@ section[data-testid="stSidebar"] {
     color: white;
 }
 
+/* Logout Button in Sidebar */
+section[data-testid="stSidebar"] .stButton > button {
+    padding: 6px 12px !important;
+    font-size: 12px !important;
+}
+
 /* Inputfelder */
 .stTextInput input {
     border-radius: 10px;

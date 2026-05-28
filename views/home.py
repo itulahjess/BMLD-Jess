@@ -220,6 +220,36 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
 	line-height: 1.45;
 }
 
+/* ---------- INFO CARD BUTTONS ---------- */
+
+.stButton > button {
+	position: relative;
+	overflow: hidden;
+	background: rgba(255, 255, 255, 0.82) !important;
+	border: 1px solid rgba(95, 208, 173, 0.18) !important;
+	padding: 28px 20px !important;
+	border-radius: 26px !important;
+	text-align: center;
+	box-shadow: 0 14px 34px rgba(31, 122, 99, 0.07) !important;
+	height: 190px !important;
+	backdrop-filter: blur(12px);
+	transition: transform 0.25s ease, box-shadow 0.25s ease, border 0.25s ease !important;
+	width: 100% !important;
+	color: #054033 !important;
+	font-size: 19px !important;
+	font-weight: 900 !important;
+	white-space: pre-wrap !important;
+	word-wrap: break-word !important;
+	line-height: 1.35 !important;
+}
+
+.stButton > button:hover {
+	transform: translateY(-6px) !important;
+	box-shadow: 0 22px 48px rgba(31, 122, 99, 0.13) !important;
+	border: 1px solid rgba(95, 208, 173, 0.34) !important;
+	background: rgba(255, 255, 255, 0.82) !important;
+}
+
 /* ---------- FOOTER ---------- */
 
 .footer {
@@ -327,40 +357,20 @@ st.markdown("<br>", unsafe_allow_html=True)
 c1, c2, c3, c4 = st.columns(4)
 
 with c1:
-	st.markdown("""
-	<div class="info-card">
-		<div class="info-icon">📋</div>
-		<div class="info-title">Aboverwaltung</div>
-		<div class="info-text">Füge neue Abos hinzu und verwalte bestehende Einträge.</div>
-	</div>
-	""", unsafe_allow_html=True)
+	if st.button("📋 Aboverwaltung\n\nFüge neue Abos hinzu und verwalte bestehende Einträge.", key="btn_aboverwaltung", use_container_width=True):
+		st.switch_page("views/Aboverwaltung.py")
 
 with c2:
-	st.markdown("""
-	<div class="info-card">
-		<div class="info-icon">📊</div>
-		<div class="info-title">Aboübersicht</div>
-		<div class="info-text">Sieh deine monatlichen und jährlichen Kosten auf einen Blick.</div>
-	</div>
-	""", unsafe_allow_html=True)
+	if st.button("📊 Aboübersicht\n\nSieh deine monatlichen und jährlichen Kosten auf einen Blick.", key="btn_aboubersicht", use_container_width=True):
+		st.switch_page("views/Aboubersicht.py")
 
 with c3:
-	st.markdown("""
-	<div class="info-card">
-		<div class="info-icon">💰</div>
-		<div class="info-title">Budgetplaner</div>
-		<div class="info-text">Plane dein Budget und behalte deine Ausgaben im Griff.</div>
-	</div>
-	""", unsafe_allow_html=True)
+	if st.button("💰 Budgetplaner\n\nPlane dein Budget und behalte deine Ausgaben im Griff.", key="btn_budgetplaner", use_container_width=True):
+		st.switch_page("views/Budgetplaner.py")
 
 with c4:
-	st.markdown("""
-	<div class="info-card">
-		<div class="info-icon">🎯</div>
-		<div class="info-title">Sparziele</div>
-		<div class="info-text">Erstelle Sparziele und verfolge deinen Fortschritt.</div>
-	</div>
-	""", unsafe_allow_html=True)
+	if st.button("🎯 Sparziele\n\nErstelle Sparziele und verfolge deinen Fortschritt.", key="btn_sparziele", use_container_width=True):
+		st.switch_page("views/Sparziele.py")
 
 
 st.markdown("""
