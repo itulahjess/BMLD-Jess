@@ -2,7 +2,7 @@ Hypothese
 
 ## Protokoll:
 ### Startseite:
-Startseite	Schön gestaltet, die Icons (Aboverwaltung, Aboübersicht etc.) können für Verwirrung sorgen da man nicht draufklicken kann
+Schön gestaltet, die Icons (Aboverwaltung, Aboübersicht etc.) können für Verwirrung sorgen da man nicht draufklicken kann
 ### Registrierung:  
 gut
 ### Home Bildschirm:
