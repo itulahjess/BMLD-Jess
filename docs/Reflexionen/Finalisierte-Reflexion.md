@@ -1,6 +1,6 @@
 Die Entwicklung unserer Aboverwaltungsapp war ein äusserst lehrreiches, aber intensives Projekt. Da wir noch nicht so affin mit coden und Phyton sind, hatten wir mehrere Schwierigkeiten.
 
-Für uns war es am Schwierigsten, wie wir Anfangen sollten und was wir genau Codieren. Denn vor allem am Anfang, hatte unsere App bei fast jeder Änderung nicht mehr funktionier und das war sehr frustrierend. 
+Für uns war es am schwierigsten, wie wir anfangen sollten und was wir genau codieren. Denn vor allem am Anfang, hatte unsere App bei fast jeder Änderung nicht mehr funktioniert und das war sehr frustrierend. 
 
 Wir haben uns aber nicht runterkriegenlassen, denn mithilfe von den Vorlesungen, Co-Pilot und Paul konnten wir unsere Hürden überstehen und haben eine funktionierende App programmiert. 
 
