@@ -37,4 +37,4 @@ Keine
 Keine
 
 ## Schlussfolgerungen
-Die Hypothese wurde grösstenteils bestätigt. Der Nutzer konnte die App ohne Anleitung bedienen und die meisten Funktionen ohne Probleme nutzen. Verbesserungspotenzal besteht vor allem beim Budgetplaner, da dessen Aufbau und Bedienung noch verständlicher gestaltet werden können.
+Die Hypothese wurde grösstenteils bestätigt. Die Nutzerin konnte die App ohne Anleitung bedienen und die meisten Funktionen problemlos nutzen. Verbesserungspotenzial besteht vor allem beim Budgetplaner, da dessen Aufbau und Bedienung noch verständlicher gestaltet werden können.
