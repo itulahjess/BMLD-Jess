@@ -56,12 +56,12 @@ col1.metric(
 )
 
 col2.metric(
-	"Ausgegeben",
+	"Gesamtausgaben",
 	f"CHF {total_spent:.2f}"
 )
 
 col3.metric(
-	"Verbleibend",
+	"Verbleibend im Ganzen",
 	f"CHF {remaining:.2f}"
 )
 

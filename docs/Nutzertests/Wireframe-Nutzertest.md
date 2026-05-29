@@ -34,7 +34,7 @@ Nutzer 2: gut
 Nutzer 3: am Besten auf Deutsch übersetzen, sonst gut
 
 
-## Stichworte zu den vier Punkten des Test-Rasters:
+## Auswertung:
 ### Was war gut?
 - Nur die wichtigsten Angaben mussten angegeben werden.
 - Basic, man wusste, wie es abläuft.

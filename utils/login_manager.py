@@ -67,7 +67,7 @@ class LoginManager:
         """Saves current user credentials to the credentials file."""
         self.data_manager.save_app_data(self.auth_credentials, self.auth_credentials_file)
 
-    def login_register(self, login_title='Login', register_title='Register new user'):
+    def login_register(self, login_title='Login', register_title='Registrieren'):
         """
         Handles authentication. When not logged in, shows the login/register page
         and stops further execution. When logged in, adds the logout button to the
