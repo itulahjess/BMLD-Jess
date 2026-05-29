@@ -236,13 +236,26 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
 	transition: transform 0.25s ease, box-shadow 0.25s ease, border 0.25s ease !important;
 	width: 100% !important;
 	color: #054033 !important;
-	font-size: 19px !important;
-	font-weight: 900 !important;
 	white-space: pre-wrap !important;
 	word-wrap: break-word !important;
 	line-height: 1.35 !important;
 }
 
+.stButton > button p {
+	font-size: 15px !important;
+	font-weight: 400 !important; /* description normal */
+	line-height: 1.35 !important;
+	color: #054033 !important;
+	white-space: pre-line !important;
+	margin: 0 !important;
+}
+
+/* ONLY first line (emoji + title) */
+.stButton > button p::first-line {
+	font-size: 26px !important;
+	font-weight: 900 !important;
+}
+			
 .stButton > button:hover {
 	transform: translateY(-6px) !important;
 	box-shadow: 0 22px 48px rgba(31, 122, 99, 0.13) !important;
@@ -377,19 +390,19 @@ st.markdown("<br>", unsafe_allow_html=True)
 c1, c2, c3, c4 = st.columns(4)
 
 with c1:
-	if st.button("📋 Aboverwaltung\n\nFüge neue Abos hinzu und verwalte bestehende Einträge.", key="btn_aboverwaltung", use_container_width=True):
+	if st.button("📋 Aboverwaltung\nFüge neue Abos hinzu und verwalte bestehende Einträge.", key="btn_aboverwaltung", use_container_width=True):
 		st.switch_page("views/Aboverwaltung.py")
 
 with c2:
-	if st.button("📊 Aboübersicht\n\nSieh deine monatlichen und jährlichen Kosten auf einen Blick.", key="btn_aboubersicht", use_container_width=True):
+	if st.button("📊 Aboübersicht\nSieh deine monatlichen und jährlichen Kosten auf einen Blick.", key="btn_aboubersicht", use_container_width=True):
 		st.switch_page("views/Aboubersicht.py")
 
 with c3:
-	if st.button("💰 Budgetplaner\n\nPlane dein Budget und behalte deine Ausgaben im Griff.", key="btn_budgetplaner", use_container_width=True):
+	if st.button("💰 Budgetplaner\nPlane dein Budget und behalte deine Ausgaben im Griff.", key="btn_budgetplaner", use_container_width=True):
 		st.switch_page("views/Budgetplaner.py")
 
 with c4:
-	if st.button("🎯 Sparziele\n\nErstelle Sparziele und verfolge deinen Fortschritt.", key="btn_sparziele", use_container_width=True):
+	if st.button("🎯 Sparziele\nErstelle Sparziele und verfolge deinen Fortschritt.", key="btn_sparziele", use_container_width=True):
 		st.switch_page("views/Sparziele.py")
 
 
