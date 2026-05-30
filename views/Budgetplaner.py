@@ -184,7 +184,10 @@ if "edit_budget_idx" in st.session_state:
 				_rerun()
 
 
-render_section_title("Neue Ausgabe")
+render_section_title(
+	"Neue Ausgabe",
+	"Erfasse, wie viel du bisher vom Budget ausgegeben hast."
+)
 
 with st.expander("Ausgabe hinzufügen"):
 
