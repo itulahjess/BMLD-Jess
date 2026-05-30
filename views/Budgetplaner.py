@@ -205,7 +205,10 @@ with st.expander("Ausgabe hinzufügen"):
 			icon_labels
 		)
 
-		description = col2.text_input("Beschreibung")
+		description = col2.text_input(
+			"Beschreibung",
+			placeholder="z. B. aktuelles Abo: Spotify"
+		)
 
 		amount = st.number_input(
 			"Betrag (CHF)",
@@ -268,7 +271,8 @@ if "edit_expense_idx" in st.session_state:
 
 			description = col2.text_input(
 				"Beschreibung",
-				value=expense["description"]
+				value=expense["description"],
+				placeholder="z. B. aktuelles Abo: Spotify"
 			)
 
 			amount = st.number_input(
