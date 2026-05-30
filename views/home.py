@@ -306,25 +306,7 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
 	}
 }
 			
-section[data-testid="stSidebar"] .stButton > button {
-    background-color: #66d9b8 !important;
-    color: white !important;
-    border-radius: 12px !important;
-    border: none !important;
-    padding: 6px 12px !important;
-    font-size: 16px !important;
-    font-family: 'Playfair Display', serif !important;
-    font-weight: 600 !important;
-    height: auto !important;
-    width: auto !important;
-    box-shadow: none !important;
-}
 
-section[data-testid="stSidebar"] .stButton > button:hover {
-    background-color: #45c9a5 !important;
-    color: white !important;
-}
-			
 </style>
 """, unsafe_allow_html=True)
 

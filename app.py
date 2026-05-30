@@ -114,9 +114,26 @@ section[data-testid="stSidebar"] {
 
 /* Logout Button in Sidebar */
 section[data-testid="stSidebar"] .stButton > button {
+    background-color: rgba(255, 255, 255, 0.82) !important;
+    color: #054033 !important;
     padding: 6px 12px !important;
     font-size: 12px !important;
+    font-weight: 400 !important;
+    border: 1px solid rgba(95, 208, 173, 0.18) !important;
+    height: auto !important;
+    width: auto !important;
 }
+
+section[data-testid="stSidebar"] .stButton > button p {
+    font-weight: 400 !important;
+    font-size: 12px !important;
+}
+
+section[data-testid="stSidebar"] .stButton > button p::first-line {
+    font-weight: 400 !important;
+    font-size: 12px !important;
+}
+
 
 /* Inputfelder */
 .stTextInput input {
