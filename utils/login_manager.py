@@ -210,7 +210,7 @@ class LoginManager:
             color:var(--text-dark);
         }
         button[data-baseweb="tab"][aria-selected="true"] {
-            background:#5fd0ad;
+            background: var(--mint-strong);
             color:white;
         }
         div[data-baseweb="tab-highlight"] {
