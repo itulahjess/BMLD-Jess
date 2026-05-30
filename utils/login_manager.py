@@ -179,7 +179,7 @@ class LoginManager:
             box-shadow:0 0 0 3px rgba(95,208,173,0.16) !important;
         }
 
-        button, .stButton > button {
+        .stButton > button {
             border-radius:16px !important;
             border:1px solid rgba(95,208,173,0.26) !important;
             background:#d9f2e8 !important;
@@ -188,7 +188,7 @@ class LoginManager:
             box-shadow:0 8px 20px rgba(31,122,99,0.08) !important;
             transition:all 0.2s ease !important;
         }
-        button:hover, .stButton > button:hover {
+        .stButton > button:hover {
             transform:translateY(-2px) !important;
             border:1px solid rgba(95,208,173,0.48) !important;
             box-shadow:0 14px 28px rgba(31,122,99,0.13) !important;
@@ -221,11 +221,17 @@ class LoginManager:
         st.markdown(css, unsafe_allow_html=True)
     def _login(self):
         """Renders the login form and handles authentication status messages."""
-        self.authenticator.login()
+        self.authenticator.login(fields={
+            'Form name': 'Login',
+            'Username': 'Benutzername',
+            'Password': 'Passwort',
+            'Login': 'Anmelden',
+            'Captcha': 'Captcha'
+        })
         if st.session_state["authentication_status"] is False:
-            st.error("Username/password is incorrect")
+            st.error("Benutzername oder Passwort ist falsch")
         else:
-            st.warning("Please enter your username and password")
+            st.warning("Bitte gib deinen Benutzernamen und dein Passwort ein")
 
     def _register(self):
         """
@@ -235,14 +241,29 @@ class LoginManager:
         and saves credentials on successful registration.
         """
         st.info("""
-        The password must be 8-20 characters long and include at least one uppercase letter,
-        one lowercase letter, one digit, and one special character from @$!%*?&.
+        Das Passwort muss 8-20 Zeichen lang sein und mindestens einen Großbuchstaben,
+        einen Kleinbuchstaben, eine Zahl und ein Sonderzeichen aus @$!%*?& enthalten.
         """)
-        res = self.authenticator.register_user()
+        res = self.authenticator.register_user(fields={
+            'Form name': 'Registrieren',
+            'First name': 'Vorname',
+            'Last name': 'Nachname',
+            'Email': 'E-Mail',
+            'Username': 'Benutzername',
+            'Password': 'Passwort',
+            'Repeat password': 'Passwort wiederholen',
+            'Password hint': 'Passworthinweis',
+            'Captcha': 'Captcha',
+            'Register': 'Registrieren',
+            'Dialog name': 'Verifizierungscode',
+            'Code': 'Code',
+            'Submit': 'Senden',
+            'Error': 'Code ist falsch'
+        })
         if res[1] is not None:
-            st.success(f"User {res[1]} registered successfully")
+            st.success(f"Benutzer {res[1]} erfolgreich registriert")
             try:
                 self._save_auth_credentials()
-                st.success("Credentials saved successfully")
+                st.success("Anmeldedaten erfolgreich gespeichert")
             except Exception as e:
-                st.error(f"Failed to save credentials: {e}")
+                st.error(f"Speichern der Anmeldedaten fehlgeschlagen: {e}")
