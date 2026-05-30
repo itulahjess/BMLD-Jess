@@ -119,22 +119,103 @@ class LoginManager:
                 self._register()
 
     def _inject_mint_styles(self):
-        """Inject CSS to style the login/register page with mint-green accents but without the boxed header."""
+        """Inject CSS to style the login/register page with the app's mint theme and card layout."""
         css = """
         <style>
-        :root{--mint:#c8f1e0;--mint-strong:#56c49d;--card:#ffffff}
-        /* center the main column */
-        .stApp .block-container{max-width:760px;margin:28px auto;padding-left:16px;padding-right:16px}
-        /* Option A: remove the box around the header */
-        .login-header{max-width:760px;margin:6px auto 18px;padding:0;border-radius:0;background:transparent;box-shadow:none;text-align:center}
-    .login-title{font-size:16spx;font-weight:700;color:#054033;margin:0}
-        .login-sub{color:#0f5132;margin-top:6px}
-        /* inputs and buttons */
-        input[type='text'], input[type='password'], input[type='number'], textarea{border-radius:8px;border:1px solid #e6f2ec;padding:10px;background:#f7fffb;color:#000000}
-        button, .stButton>button{background:var(--mint-strong)!important;color:#ffffff!important;border-radius:8px!important;padding:8px 14px!important;border:none!important;box-shadow:0 6px 18px rgba(86,196,157,0.16)!important}
-        /* subtle card for tabs content */
-        .stTabs [role='tablist']{margin-bottom:6px}
-        .stContainer{background:#ffffff;border-radius:10px;padding:12px}
+        :root{--mint:#c8f1e0;--mint-strong:#7bd7bd;--card:#ffffff;--text-dark:#054033;--text-muted:#52796f;--border:#8be0c8}
+
+        .stApp{background-color:#f7fffb;}
+        .stApp .block-container{max-width:760px;margin:28px auto;padding-left:16px;padding-right:16px;}
+
+        .login-header{
+            max-width:760px;
+            margin:0 auto 20px;
+            padding:30px 24px;
+            border-radius:22px;
+            background:#ffffff;
+            box-shadow:0 14px 34px rgba(31,122,99,0.06);
+            text-align:center;
+        }
+        .login-title{
+            font-size:44px;
+            font-weight:700;
+            color:var(--text-dark);
+            margin:0;
+        }
+        .login-sub{
+            font-size:20px;
+            color:var(--text-muted);
+            margin-top:10px;
+            line-height:1.55;
+        }
+
+        .stContainer{
+            background:#ffffff;
+            border-radius:22px;
+            padding:20px 24px 24px;
+            box-shadow:0 14px 34px rgba(31,122,99,0.06);
+        }
+
+        .stTabs [role='tablist']{
+            margin-bottom:14px;
+        }
+
+        .stTextInput input,
+        .stPasswordInput input,
+        .stNumberInput input,
+        .stDateInput input,
+        .stSelectbox div[data-baseweb="select"] {
+            border-radius:14px !important;
+            border:2px solid rgba(95,208,173,0.22) !important;
+            background:rgba(255,255,255,0.85) !important;
+            color:#2f3038 !important;
+            padding:10px !important;
+        }
+        .stTextInput input:focus,
+        .stPasswordInput input:focus,
+        .stNumberInput input:focus,
+        .stDateInput input:focus {
+            border-color:#5fd0ad !important;
+            box-shadow:0 0 0 3px rgba(95,208,173,0.16) !important;
+        }
+
+        button, .stButton > button {
+            border-radius:16px !important;
+            border:1px solid rgba(95,208,173,0.26) !important;
+            background:#d9f2e8 !important;
+            color:var(--text-dark) !important;
+            font-weight:800 !important;
+            box-shadow:0 8px 20px rgba(31,122,99,0.08) !important;
+            transition:all 0.2s ease !important;
+        }
+        button:hover, .stButton > button:hover {
+            transform:translateY(-2px) !important;
+            border:1px solid rgba(95,208,173,0.48) !important;
+            box-shadow:0 14px 28px rgba(31,122,99,0.13) !important;
+            background:#e8fff5 !important;
+            color:var(--text-dark) !important;
+        }
+
+        button[data-baseweb="tab"] {
+            font-size:16px;
+            font-weight:700;
+            color:#52796f;
+            padding:12px 18px;
+            border-radius:999px;
+            margin-right:8px;
+            transition:all 0.2s ease;
+        }
+        button[data-baseweb="tab"]:hover {
+            background:rgba(95,208,173,0.12);
+            color:var(--text-dark);
+        }
+        button[data-baseweb="tab"][aria-selected="true"] {
+            background:#5fd0ad;
+            color:white;
+        }
+        div[data-baseweb="tab-highlight"] {
+            display:none;
+        }
         </style>
         """
         st.markdown(css, unsafe_allow_html=True)
