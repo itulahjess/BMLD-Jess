@@ -252,7 +252,7 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
 
 /* ONLY first line (emoji + title) */
 .stButton > button p::first-line {
-	font-size: 26px !important;
+	font-size: 22px !important;
 	font-weight: 900 !important;
 }
 			
@@ -372,15 +372,15 @@ st.markdown("<br>", unsafe_allow_html=True)
 c1, c2, c3, c4 = st.columns(4)
 
 with c1:
-	if st.button("📋 Aboverwaltung\nFüge neue Abos hinzu und verwalte bestehende Einträge.", key="btn_aboverwaltung", use_container_width=True):
+	if st.button("📋 Aboverwaltung\nFüge Abos hinzu und verwalte bestehende Einträge.", key="btn_aboverwaltung", use_container_width=True):
 		st.switch_page("views/Aboverwaltung.py")
 
 with c2:
-	if st.button("📊 Aboübersicht\nSieh deine monatlichen und jährlichen Kosten auf einen Blick.", key="btn_aboubersicht", use_container_width=True):
+	if st.button("📊 Aboübersicht\nSiehe deine monatlichen und jährlichen Kosten.", key="btn_aboubersicht", use_container_width=True):
 		st.switch_page("views/Aboubersicht.py")
 
 with c3:
-	if st.button("💰 Budgetplaner\nPlane dein Budget und behalte deine Ausgaben im Griff.", key="btn_budgetplaner", use_container_width=True):
+	if st.button("💰 Budgetplaner\nPlane dein Budget und verfolge deine Ausgaben.", key="btn_budgetplaner", use_container_width=True):
 		st.switch_page("views/Budgetplaner.py")
 
 with c4:
