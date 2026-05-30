@@ -254,7 +254,7 @@ div[data-testid="stMetric"] [data-testid="stMetricDelta"] {
 .stButton > button p::first-line {
 	font-size: 26px !important;
 	font-weight: 900 !important;
-	-webkit-text-emphasis-weight: bold !important;
+	-webkit-text-stroke: 0.5px #054033 !important;
 }
 			
 .stButton > button:hover {
